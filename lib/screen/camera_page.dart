@@ -14,27 +14,27 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
-  File? _image,
-      _current,
-      _head,
-      _left,
-      _right,
-      _four,
-      _five,
-      _six,
-      _seven,
-      _eight,
-      _nine,
-      _ten,
-      _eleven,
-      _twelve,
-      _thirteen,
-      _fourteen,
-      _fifteen,
-      _sixteen,
-      _seventeen;
+    File? _image,
+        _current,
+        _head,
+        _left,
+        _right,
+        _four,
+        _five,
+        _six,
+        _seven,
+        _eight,
+        _nine,
+        _ten,
+        _eleven,
+        _twelve,
+        _thirteen,
+        _fourteen,
+        _fifteen,
+        _sixteen,
+        _seventeen;
 
-  List<File?> imageList = [];
+
   String _text = '사진을 선택하시오';
   final picker = ImagePicker();
 
@@ -134,8 +134,8 @@ class _CameraPageState extends State<CameraPage> {
           },
           child: Container(
             color: Colors.grey,
-            width: 100,
-            height: 100,
+            width: MediaQuery.of(context).size.width/4,
+            height: MediaQuery.of(context).size.width/4,
             child: Center(
                 child: index == null
                     ? const Text('No image')
@@ -176,14 +176,17 @@ class _CameraPageState extends State<CameraPage> {
                 },
               );
             },
-            child: Container(
-              color: Colors.grey,
-              width: 80,
-              height: 80,
-              child: Center(
-                  child: index == null
-                      ? const Text('No image')
-                      : Image.file(File(index!.path))),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                color: Colors.grey,
+                width: MediaQuery.of(context).size.width/3.3,
+                height: MediaQuery.of(context).size.width/3.3,
+                child: Center(
+                    child: index == null
+                        ? const Text('No image')
+                        : Image.file(File(index!.path))),
+              ),
             ),
           ),
           Text(part)
@@ -264,117 +267,135 @@ class _CameraPageState extends State<CameraPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                      onPressed: () {
-                        if (_image != null) {
-                          toastmsg('저장완료');
-                          GallerySaver.saveImage(_image!.path)
-                              .then((value) => print('save value = $value'))
-                              .catchError((err) {
-                            print('error : ($err');
-                          });
-                        } else {
-                          toastmsg('선택 이미지 없음');
-                        }
-                      },
-                      child: const Text("이미지 저장")),
+                    child: const Text("이미지 저장"),
+                    onPressed: () {
+                      if (_image != null) {
+                        toastmsg('저장완료');
+                        GallerySaver.saveImage(_image!.path)
+                            .then((value) => print('save value = $value'))
+                            .catchError((err) {
+                          print('error : ($err');
+                        });
+                      } else {
+                        toastmsg('선택 이미지 없음');
+                      }
+                    },
+                  ),
                   ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('정말 업로드 하시겠습니까?'),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          upgrid('머리', _head),
-                                          upgrid('왼쪽 아가미', _left),
-                                          upgrid('오른쪽 아가미', _right),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          upgrid('4', _four),
-                                          upgrid('5', _five),
-                                          upgrid('6', _six),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          upgrid('7', _seven),
-                                          upgrid('8', _eight),
-                                          upgrid('9', _nine),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          upgrid('10', _ten),
-                                          upgrid('11', _eleven),
-                                          upgrid('12', _twelve),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          upgrid('13', _thirteen),
-                                          upgrid('14', _fourteen),
-                                          upgrid('15', _fifteen),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          upgrid('16', _sixteen),
-                                          upgrid('17', _seventeen),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                    child: const Text("이미지 업로드"),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('정말 업로드 하시겠습니까?'),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('머리', _head),
+                                        upgrid('왼쪽 아가미', _left)
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('오른 아가미', _right),
+                                        upgrid('4', _four)
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('5', _five),
+                                        upgrid('6', _six)
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('7', _seven),
+                                        upgrid('8', _eight)
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('9', _nine),
+                                        upgrid('10', _ten)
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('11', _eleven),
+                                        upgrid('12', _twelve),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('13', _thirteen),
+                                        upgrid('14', _fourteen),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('15', _fifteen),
+                                        upgrid('16', _sixteen),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        upgrid('11', _seventeen),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      // 다이얼로그 닫기
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('업로드'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      // 다이얼로그 닫기
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('닫기'),
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      child: const Text("이미지 업로드")),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    // 다이얼로그 닫기
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('업로드'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    // 다이얼로그 닫기
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('닫기'),
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                  ),
                 ],
               )
             ],
-          )
-      ),
+          )),
     );
   }
 }
