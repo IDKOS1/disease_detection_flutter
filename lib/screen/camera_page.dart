@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-import '';
 import '../layout/toast_message.dart';
 
 class CameraPage extends StatefulWidget {
@@ -15,8 +14,25 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
-  File? _image, _current, _head, _left, _right, _four, _five, _six, _seven, _eight;
-  File? _nine, _ten, _eleven, _twelve, _thirteen, _fourteen, _fifteen, _sixteen, _seventeen;
+  File? _image,
+      _current,
+      _head,
+      _left,
+      _right,
+      _four,
+      _five,
+      _six,
+      _seven,
+      _eight,
+      _nine,
+      _ten,
+      _eleven,
+      _twelve,
+      _thirteen,
+      _fourteen,
+      _fifteen,
+      _sixteen,
+      _seventeen;
 
   List<File?> imageList = [];
   String _text = '사진을 선택하시오';
@@ -24,14 +40,15 @@ class _CameraPageState extends State<CameraPage> {
 
   //비동기 처리를 통해 카메라와 갤러리에서 이미지 호출
   Future getImage(ImageSource imageSource) async {
-    final image = await picker.pickImage(source: imageSource);
+    final image = await picker.pickImage(
+        source: imageSource, preferredCameraDevice: CameraDevice.rear);
 
     // 가져온 이미지를 _image에 저장
     if (image != null) {
       setState(() {
         _image = File(image!.path);
         _current = _image;
-        switch(_text) {
+        switch (_text) {
           case '머리':
             _head = _image;
             break;
@@ -83,15 +100,13 @@ class _CameraPageState extends State<CameraPage> {
           case '17':
             _seventeen = _image;
             break;
-
         }
       });
     }
   }
 
-
   //이미지를 보여주는 위젯
-  Widget showImage(){
+  Widget showImage() {
     return Column(
       children: [
         Text(_text),
@@ -102,17 +117,16 @@ class _CameraPageState extends State<CameraPage> {
             child: Center(
                 child: _current == null
                     ? const Text('No image')
-                    : Image.file(File(_current!.path)))
-        ),
+                    : Image.file(File(_current!.path)))),
       ],
     );
   }
 
-  Widget grid(String part, File? index){
+  Widget grid(String part, File? index) {
     return Column(
       children: [
         InkWell(
-          onTap:(){
+          onTap: () {
             setState(() {
               _text = part;
               _current = index;
@@ -125,8 +139,7 @@ class _CameraPageState extends State<CameraPage> {
             child: Center(
                 child: index == null
                     ? const Text('No image')
-                    : Image.file(File(index!.path))
-            ),
+                    : Image.file(File(index!.path))),
           ),
         ),
         Text(part)
@@ -134,9 +147,53 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
+  Widget upgrid(String part, File? index) {
+    return Expanded(
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Dialog(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        color: Colors.white,
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width,
+                        child: Center(
+                          child: index == null
+                              ? const Text('No image')
+                              : Image.file(File(index.path)),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            child: Container(
+              color: Colors.grey,
+              width: 80,
+              height: 80,
+              child: Center(
+                  child: index == null
+                      ? const Text('No image')
+                      : Image.file(File(index!.path))),
+            ),
+          ),
+          Text(part)
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -148,13 +205,15 @@ class _CameraPageState extends State<CameraPage> {
             children: [
               const SizedBox(height: 25.0),
               showImage(),
-              const SizedBox(height: 20.0,),
+              const SizedBox(
+                height: 20.0,
+              ),
               SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
                       grid('머리', _head),
-                      const  SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       grid('왼쪽 아가미', _left),
                       const SizedBox(width: 5),
                       grid('오른쪽 아가미', _right),
@@ -188,19 +247,15 @@ class _CameraPageState extends State<CameraPage> {
                       grid('17', _seventeen),
                       const SizedBox(width: 5),
                     ],
-                  )
-              ),
-
+                  )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   FloatingActionButton(
-                      onPressed: (){
+                      onPressed: () {
                         getImage(ImageSource.camera);
                       },
-                      child: const Icon(Icons.add_a_photo)
-                  ),
-
+                      child: const Icon(Icons.add_a_photo)),
                   FloatingActionButton(
                     onPressed: () {
                       getImage(ImageSource.gallery);
@@ -209,20 +264,114 @@ class _CameraPageState extends State<CameraPage> {
                   ),
                 ],
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    if(_image != null) {
-                      toastmsg('저장완료');
-                      GallerySaver.saveImage(_image!.path)
-                          .then((value) => print('save value = $value'))
-                          .catchError((err) {
-                        print('error : ($err');
-                      });
-                    } else {
-                      toastmsg('선택 이미지 없음');
-                    }
-                  },
-                  child: const Text("이미지 저장"))
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        if (_image != null) {
+                          toastmsg('저장완료');
+                          GallerySaver.saveImage(_image!.path)
+                              .then((value) => print('save value = $value'))
+                              .catchError((err) {
+                            print('error : ($err');
+                          });
+                        } else {
+                          toastmsg('선택 이미지 없음');
+                        }
+                      },
+                      child: const Text("이미지 저장")),
+                  ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('정말 업로드 하시겠습니까?'),
+                                content: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          upgrid('머리', _head),
+                                          upgrid('왼쪽 아가미', _left),
+                                          upgrid('오른쪽 아가미', _right),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          upgrid('4', _four),
+                                          upgrid('5', _five),
+                                          upgrid('6', _six),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          upgrid('7', _seven),
+                                          upgrid('8', _eight),
+                                          upgrid('9', _nine),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          upgrid('10', _ten),
+                                          upgrid('11', _eleven),
+                                          upgrid('12', _twelve),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          upgrid('13', _thirteen),
+                                          upgrid('14', _fourteen),
+                                          upgrid('15', _fifteen),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          upgrid('16', _sixteen),
+                                          upgrid('17', _seventeen),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      // 다이얼로그 닫기
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('업로드'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      // 다이얼로그 닫기
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('닫기'),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      child: const Text("이미지 업로드")),
+                ],
+              )
             ],
           )
       ),
