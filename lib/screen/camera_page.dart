@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:untitled/class/class.dart';
+import 'package:untitled/class/image_class.dart';
 import '../layout/toast_message.dart';
 
 class CameraPage extends StatefulWidget {
@@ -17,7 +17,6 @@ class CameraPage extends StatefulWidget {
 
 class _CameraPageState extends State<CameraPage> {
   File? _current, _image;
-
 
   static List<String> imgName = [
     '머리',
@@ -65,28 +64,40 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  final PageController _pageController = PageController();
+
   //이미지를 보여주는 위젯
   Widget showImage() {
     return Column(
       children: [
         Text(_text),
         Container(
-            color: Colors.grey,
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
-            height: MediaQuery
-                .of(context)
-                .size
-                .width,
-            child: Center(
-                child: _current == null
+          color: Colors.grey,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.width,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: imageData.length,
+            itemBuilder: (context, index) {
+              final images = imageData[index];
+              return Center(
+                child: images.imgPath == null
                     ? const Text('No image')
-                    : Image.file(File(_current!.path)))),
+                    : Image.file(File(images.imgPath!.path)),
+              );
+            },
+            onPageChanged: (index) {
+              setState(() {
+                _text = imageData[index].name;
+                _current = imageData[index].imgPath;
+              });
+            },
+          ),
+        ),
       ],
     );
   }
+
 
   Widget grid(Images images) {
     return Column(
@@ -97,6 +108,13 @@ class _CameraPageState extends State<CameraPage> {
               _text = images.name;
               _current = images.imgPath;
             });
+            final index = imageData.indexWhere((item) => item.name == images.name);
+            _pageController.animateToPage(
+              index,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+
           },
           child: Container(
             color: Colors.grey,
