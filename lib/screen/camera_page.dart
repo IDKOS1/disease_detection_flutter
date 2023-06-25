@@ -19,26 +19,6 @@ class _CameraPageState extends State<CameraPage> {
   File? _current, _image;
 
 
-  static List<String> imgText = [
-    '_head',
-    '_left',
-    '_right',
-    '_four',
-    ' _five',
-    '_six',
-    '_seven',
-    '_eight',
-    '_nine',
-    '_ten',
-    '_eleven',
-    '_twelve',
-    '_thirteen',
-    '_fourteen',
-    '_fifteen',
-    '_sixteen',
-    '_seventeen'
-  ];
-
   static List<String> imgName = [
     '머리',
     '왼쪽 아가미',
@@ -61,7 +41,7 @@ class _CameraPageState extends State<CameraPage> {
 
 
   final List<Images> imageData = List.generate(17, (index) =>
-      Images(imgName[index], imgText[index], null));
+      Images(imgName[index], null));
 
   String _text = '사진을 선택하시오';
   final picker = ImagePicker();
