@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/screen/camera_page.dart';
+import 'package:untitled/bottom_navigator_bar.dart';
+
 
 
 
@@ -12,11 +13,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.blue),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const CameraPage(),
-        }
+        theme: ThemeData(
+            colorSchemeSeed: Colors.blue,
+          useMaterial3: true
+        ),
+        home: NaviswipeState(),
     );
   }
 }
