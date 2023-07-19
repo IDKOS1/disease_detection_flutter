@@ -1,11 +1,11 @@
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:untitled/class/image_class.dart';
+import 'package:untitled/screen/camera_guide.dart';
 import '../layout/toast_message.dart';
 
 class CameraPage extends StatefulWidget {
@@ -68,45 +68,53 @@ class _CameraPageState extends State<CameraPage> {
 
   //이미지를 보여주는 위젯
   Widget showImage() {
+    final widthSize = MediaQuery.of(context).size.width;
+    final heightSize = MediaQuery.of(context).size.height;
     return Container(
-      height: MediaQuery.of(context).size.width-8,
-      width: MediaQuery.of(context).size.width-8,
+      width: widthSize,
       child: Column(
         children: [
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: imageData.length,
-              itemBuilder: (context, index) {
-                final images = imageData[index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: images.imgPath == null
-                          ? Center(child: const Text('이미지를 촬영해 주세요!'))
-                          : Image.file(File(images.imgPath!.path),
+          AspectRatio(
+            aspectRatio: 1.0,
+            child: Container(
+              width: widthSize,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: imageData.length,
+                itemBuilder: (context, index) {
+                  final images = imageData[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: AspectRatio(
+                      aspectRatio: 1.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: images.imgPath == null
+                              ? const Center(child: Text('이미지를 촬영해 주세요!'))
+                              : Image.file(File(images.imgPath!.path),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-              onPageChanged: (index) {
-                setState(() {
-                  _text = imageData[index].name;
-                  _current = imageData[index].imgPath;
-                });
-              },
+                  );
+                },
+                onPageChanged: (index) {
+                  setState(() {
+                    _text = imageData[index].name;
+                    _current = imageData[index].imgPath;
+                  });
+                },
+              ),
             ),
           ),
           Text(
             _text,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -131,7 +139,7 @@ class _CameraPageState extends State<CameraPage> {
             final index = imageData.indexWhere((item) => item.name == images.name);
             _pageController.animateToPage(
               index,
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
             );
 
@@ -141,13 +149,13 @@ class _CameraPageState extends State<CameraPage> {
               border: isSelected
                   ? Border(
                   bottom: BorderSide(
-                    color: Colors.green,
+                    color: Colors.lightGreen[200]!,
                     width: 2.0,
                   )
               )
                   : null,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               child: Center(
                 child: Text(images.name,
                   style: TextStyle(
@@ -162,11 +170,14 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
-  Widget _upgrid(Images images) {
-    return Expanded(
-      child: Column(
-        children: [
-          InkWell(
+  Widget _upGrid(Images images) {
+    final size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Container(
+          height: size.width/3,
+          width: size.width/3,
+          child: InkWell(
             onTap: () {
               showDialog(
                 context: context,
@@ -178,11 +189,10 @@ class _CameraPageState extends State<CameraPage> {
                       },
                       child: Container(
                         color: Colors.white,
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.width,
+                        height: size.height / 1.7,
                         child: Center(
                           child: images.imgPath == null
-                              ? const Text('No image')
+                              ? const Text('사진이 없어요')
                               : Image.file(File(images.imgPath!.path)),
                         ),
                       ),
@@ -193,33 +203,40 @@ class _CameraPageState extends State<CameraPage> {
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Container(
-                color: Colors.grey,
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width / 3.3,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .width / 3.3,
-                child: Center(
-                    child: images.imgPath == null
-                        ? const Text('No image')
-                        : Image.file(File(images.imgPath!.path))),
+              child: AspectRatio(
+                aspectRatio: 1.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(15)
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Center(
+                        child: images.imgPath == null
+                            ? const Text('사진이 없어요',
+                          style: TextStyle(
+                              fontSize: 10
+                          ),)
+                            : Image.file(File(images.imgPath!.path))
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-          Text(images.name)
-        ],
-      ),
+        ),
+        Text(images.name)
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // 화면 세로 고정
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    final size = MediaQuery.of(context).size;
 
     return ScaffoldMessenger(
       child: SafeArea(
@@ -228,7 +245,7 @@ class _CameraPageState extends State<CameraPage> {
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('수산질병 판독 촬영',
@@ -238,21 +255,39 @@ class _CameraPageState extends State<CameraPage> {
                       ),),
                   ],
                 ),
-                SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text('촬영예시',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.blueAccent,
+                const SizedBox(height: 10,),
+                   Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return cameraGuide(
+                                  currentPart: _text,
+                                );
+                              }
+                          );
+                        },
+                        child: Container(
+                          child: Row(
+                            children: [
+                              Text('촬영예시',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.blueAccent,
+                                ),
+                              ),
+                              Icon(Icons.camera_alt, color: Colors.blue,),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    Icon(Icons.camera_alt, color: Colors.blue,),
-                    SizedBox(width: 20,)
-                  ],
-                ),
-                SizedBox(height: 10),
+                      SizedBox(width: 20,),
+                    ],
+                  ),
+                const SizedBox(height: 10),
                 SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -319,16 +354,16 @@ class _CameraPageState extends State<CameraPage> {
                                             mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                             children: [
-                                              _upgrid(imageData[i]),
-                                              _upgrid(imageData[i+1]),
+                                              _upGrid(imageData[i]),
+                                              _upGrid(imageData[i+1]),
                                             ],
                                         ),
                                       ],
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.start,
                                         children: [
-                                          _upgrid(imageData[16]),
+                                          _upGrid(imageData[16]),
                                         ],
                                       )
                                     ],
