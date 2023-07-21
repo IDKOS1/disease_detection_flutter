@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:untitled/class/image_class.dart';
 import 'package:untitled/screen/camera_guide.dart';
 import '../layout/toast_message.dart';
@@ -70,23 +71,24 @@ class _CameraPageState extends State<CameraPage> {
   Widget showImage() {
     final widthSize = MediaQuery.of(context).size.width;
     final heightSize = MediaQuery.of(context).size.height;
-    return Container(
-      width: widthSize,
-      child: Column(
-        children: [
-          AspectRatio(
-            aspectRatio: 1.0,
-            child: Container(
-              width: widthSize,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: imageData.length,
-                itemBuilder: (context, index) {
-                  final images = imageData[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(25.0),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          height: heightSize /2.3,
+          child: PageView.builder(
+            scrollDirection: Axis.horizontal,
+            controller: _pageController,
+            itemCount: imageData.length,
+            itemBuilder: (context, index) {
+              final images = imageData[index];
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: heightSize / 2.5,
                     child: AspectRatio(
-                      aspectRatio: 1.0,
+                      aspectRatio: 1,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.grey[400],
@@ -101,26 +103,26 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                       ),
                     ),
-                  );
-                },
-                onPageChanged: (index) {
-                  setState(() {
-                    _text = imageData[index].name;
-                    _current = imageData[index].imgPath;
-                  });
-                },
-              ),
-            ),
+                  ),
+                ],
+              );
+            },
+            onPageChanged: (index) {
+              setState(() {
+                _text = imageData[index].name;
+                _current = imageData[index].imgPath;
+              });
+            },
           ),
-          Text(
-            _text,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+        ),
+        Text(
+          _text,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -231,12 +233,14 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
+  bool showSpinner = false;
   @override
   Widget build(BuildContext context) {
     // 화면 세로 고정
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     final size = MediaQuery.of(context).size;
+
 
     return ScaffoldMessenger(
       child: SafeArea(
@@ -245,151 +249,184 @@ class _CameraPageState extends State<CameraPage> {
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('수산질병 판독 촬영',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),),
-                  ],
-                ),
-                const SizedBox(height: 10,),
-                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                const SizedBox(height: 15,),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      InkWell(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return cameraGuide(
-                                  currentPart: _text,
+                      const Text('수산질병 판독 촬영',
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),),
+                      const SizedBox(height: 10,),
+                         Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return cameraGuide(
+                                        currentPart: _text,
+                                      );
+                                    }
                                 );
-                              }
-                          );
-                        },
-                        child: Container(
-                          child: Row(
-                            children: [
-                              Text('촬영예시',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.blueAccent,
+                              },
+                              child: Container(
+                                child: Row(
+                                  children: [
+                                    Text('촬영예시',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                    Icon(Icons.camera_alt, color: Colors.blue,),
+                                  ],
                                 ),
                               ),
-                              Icon(Icons.camera_alt, color: Colors.blue,),
-                            ],
-                          ),
+                            ),
+                            SizedBox(width: 20,),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: 20,),
+                      const SizedBox(height: 10),
+                      SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              for(int i = 0; i <= 16; i++) ... [
+                                _list(imageData[i]),
+                              ]
+                            ],
+                          )),
                     ],
                   ),
-                const SizedBox(height: 10),
-                SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for(int i = 0; i <= 16; i++) ... [
-                          _list(imageData[i]),
-                          const SizedBox(width:5),
-                        ]
-                      ],
-                    )),
-                const SizedBox(height: 5.0),
+                ),
+                const SizedBox(width:5),
                 showImage(),
                 const SizedBox(height: 20.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    FloatingActionButton(
-                        onPressed: () {
-                          getImage(ImageSource.camera);
-                        },
-                        child: const Icon(Icons.add_a_photo)),
-                    FloatingActionButton(
-                      onPressed: () {
-                        getImage(ImageSource.gallery);
-                      },
-                      child: const Icon(Icons.wallpaper),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 25),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      child: const Text("이미지 저장"),
-                      onPressed: () {
-                        if (_image != null) {
-                          toastmsg('저장완료');
-                          GallerySaver.saveImage(_image!.path)
-                              .then((value) => print('save value = $value'))
-                              .catchError((err) {
-                            print('error : ($err');
-                          });
-                        } else {
-                          toastmsg('선택 이미지 없음');
-                        }
-                      },
-                    ),
-                    ElevatedButton(
-                      child: const Text("이미지 업로드"),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('정말 업로드 하시겠습니까?',
-                                  style: TextStyle(fontSize: 20),),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      for(int i=0; i <= 14; i+=2) ... [
-                                        Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              _upGrid(imageData[i]),
-                                              _upGrid(imageData[i+1]),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          FloatingActionButton(
+                              onPressed: () {
+                                getImage(ImageSource.camera);
+                              },
+                              child: const Icon(Icons.add_a_photo)),
+                          FloatingActionButton(
+                            onPressed: () {
+                              getImage(ImageSource.gallery);
+                            },
+                            child: const Icon(Icons.wallpaper),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 25),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            child: const Text("이미지 저장"),
+                            onPressed: () {
+
+                            },
+                          ),
+
+                          ElevatedButton(
+                            child: const Text("이미지 업로드"),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return StatefulBuilder(
+                                      builder: (context, setState) {
+                                        return ModalProgressHUD(
+                                          inAsyncCall: showSpinner,
+                                          child: AlertDialog(
+                                            title: const Text('정말 업로드 하시겠습니까?',
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                            content: SingleChildScrollView(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  for(int i=0; i <= 14; i+=2) ... [
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        _upGrid(imageData[i]),
+                                                        _upGrid(imageData[i+1]),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    children: [
+                                                      _upGrid(imageData[16]),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    showSpinner = true;
+                                                  });
+                                                  print('${showSpinner}');
+
+                                                  for (Images item in imageData) {
+                                                    if (item.imgPath != null) {
+                                                      await GallerySaver.saveImage(item.imgPath!.path)
+                                                          .then((value) => print('save value = $value'))
+                                                          .catchError((err) {
+                                                        print('error : ($err');
+                                                      });
+                                                    } else {
+                                                      //toastmsg('선택 이미지 없음');
+                                                    }
+                                                  }
+                                                  for (Images item in imageData) {
+                                                    item.imgPath = null;
+                                                  }
+                                                  setState(() {
+                                                    showSpinner = false;
+                                                  });
+                                                  print('${showSpinner}');
+
+                                                  toastmsg('업로드 완료');
+                                                  // 다이얼로그 닫기
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('업로드'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  // 다이얼로그 닫기
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('닫기'),
+                                              ),
                                             ],
-                                        ),
-                                      ],
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.start,
-                                        children: [
-                                          _upGrid(imageData[16]),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      // 다이얼로그 닫기
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('업로드'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      // 다이얼로그 닫기
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('닫기'),
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                    ),
-                  ],
+                                          ),
+                                        );
+                                      }
+                                    );
+                                  });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 )
               ],
             )),

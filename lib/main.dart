@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:untitled/bottom_navigator_bar.dart';
 
 
-
-
 void main() =>runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
