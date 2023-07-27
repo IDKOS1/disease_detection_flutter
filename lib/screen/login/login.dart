@@ -4,27 +4,12 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:fluttertoast/fluttertoast.dart';
 
-void main() async {
-  runApp(
-    MaterialApp(
-      home: HomePage(),
-      title: "Animated-Login-Page-UI",
-    ),
-  );
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ),
-  );
-}
-
-class HomePage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   late AnimationController controller1;
   late AnimationController controller2;
   late Animation<double> animation1;
@@ -345,7 +330,3 @@ class MyBehavior extends ScrollBehavior {
     return child;
   }
 }
-
-
-
-
