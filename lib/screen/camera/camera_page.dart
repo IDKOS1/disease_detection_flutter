@@ -18,54 +18,8 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
-  final controller = Get.put(CameraPageController());
-  File? _current, _image;
 
-  static List<String> imgName = [
-    '머리',
-    '왼쪽 아가미',
-    '오른쪽 아가미',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-    '17',
-  ];
-
-
-  final List<Images> imageData = List.generate(17, (index) =>
-      Images(imgName[index], null));
-
-  String _text = '머리';
-  final picker = ImagePicker();
-
-  //비동기 처리를 통해 카메라와 갤러리에서 이미지 호출
-  Future getImage(ImageSource imageSource) async {
-    final image = await picker.pickImage(
-        source: imageSource, preferredCameraDevice: CameraDevice.rear);
-
-    // 가져온 이미지를 _image에 저장
-    if (image != null) {
-      setState(() {
-        _image = File(image!.path);
-        _current = _image;
-        for(int i=0; i<=16; i++){
-          if(imageData[i].name == _text) {
-            imageData[i].imgPath = File(image!.path);
-          }
-        }
-      });
-    }
-  }
+  var controller = CameraPageController();
 
   final PageController _pageController = PageController();
 
@@ -80,9 +34,9 @@ class _CameraPageState extends State<CameraPage> {
           child: PageView.builder(
             scrollDirection: Axis.horizontal,
             controller: _pageController,
-            itemCount: imageData.length,
+            itemCount: controller.imageData.length,
             itemBuilder: (context, index) {
-              final images = imageData[index];
+              final images = controller.imageData[index];
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -109,15 +63,12 @@ class _CameraPageState extends State<CameraPage> {
               );
             },
             onPageChanged: (index) {
-              setState(() {
-                _text = imageData[index].name;
-                _current = imageData[index].imgPath;
-              });
+                controller.pageChanged(index);
             },
           ),
         ),
         Text(
-          _text,
+          controller._currentName,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
