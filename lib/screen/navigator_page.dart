@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/screen/camera_page.dart';
+import 'package:get/get.dart';
+import 'package:untitled/screen/setting_page.dart';
 
-class NaviswipeState extends StatefulWidget {
-  const NaviswipeState({Key? key}) : super(key: key);
+import '../get_controller/navigator_controller.dart';
+import 'camera/camera_page.dart';
+
+class NavigatorPage extends StatefulWidget {
+  const NavigatorPage({super.key});
 
   @override
-  State<NaviswipeState> createState() => _NaviswipeStateState();
+  State<NavigatorPage> createState() => _NavigatorPageState();
 }
 
-class _NaviswipeStateState extends State<NaviswipeState> {
-  int current_index = 0;
+class _NavigatorPageState extends State<NavigatorPage> {
+
+  final BottomNavigationController _PageCtrl = Get.put(BottomNavigationController());
+  List? _pages;
+
+  @override
+  void initState(){
+    super.initState();
+    _pages = [
+      CameraPage(),
+      Text('result'),
+      SettingPage()
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Obx(() => Scaffold(
+      body: Center(child: _pages![_PageCtrl.currentPage.toInt()]),
         bottomNavigationBar: BottomNavigationBar(
-            currentIndex: current_index,
-            onTap: (index){
-              setState(() {
-                current_index = index;
-              });
-            },
+            currentIndex: _PageCtrl.currentPage.toInt(),
+            onTap: _PageCtrl.changeIndex,
             items: const [
               BottomNavigationBarItem(
                   icon: Icon(Icons.camera_alt),
@@ -42,16 +56,9 @@ class _NaviswipeStateState extends State<NaviswipeState> {
             showUnselectedLabels: true,
             type: BottomNavigationBarType.shifting
           //BottomNavigationBarType.shifting : selected 된 item 확대
-        ),
-        body: Center(
-          child: body_item[current_index],
         )
+
+      ),
     );
   }
-
-  List body_item = [
-    CameraPage(),
-    Text("message page"),
-    Text("settings")
-  ];
 }

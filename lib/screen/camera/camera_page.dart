@@ -1,13 +1,14 @@
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:untitled/class/image_class.dart';
-import 'package:untitled/screen/camera_guide.dart';
-import '../layout/toast_message.dart';
+import 'package:untitled/get_controller/camera_controller.dart';
+import 'package:untitled/layout/toast_message.dart';
+import 'package:untitled/screen/camera/camera_guide.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
+  final controller = Get.put(CameraPageController());
   File? _current, _image;
 
   static List<String> imgName = [
@@ -69,7 +71,6 @@ class _CameraPageState extends State<CameraPage> {
 
   //이미지를 보여주는 위젯
   Widget showImage() {
-    final widthSize = MediaQuery.of(context).size.width;
     final heightSize = MediaQuery.of(context).size.height;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -319,11 +320,13 @@ class _CameraPageState extends State<CameraPage> {
                               onPressed: () {
                                 getImage(ImageSource.camera);
                               },
+                              heroTag: 'camera',
                               child: const Icon(Icons.add_a_photo)),
                           FloatingActionButton(
                             onPressed: () {
                               getImage(ImageSource.gallery);
                             },
+                            heroTag: 'gallery',
                             child: const Icon(Icons.wallpaper),
                           ),
                         ],
