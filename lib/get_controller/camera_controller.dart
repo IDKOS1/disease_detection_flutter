@@ -6,8 +6,8 @@ import 'package:untitled/class/image_class.dart';
 
 class CameraPageController extends GetxController {
   final picker = ImagePicker();
-  File? _image, _currentPath;
-  String _currentName = '머리';
+  File? _image, currentPath;
+  String currentName = '머리';
 
   static CameraPageController get to => Get.find();
   static List<String> imgName = [
@@ -40,9 +40,9 @@ class CameraPageController extends GetxController {
     // 가져온 이미지를 _image에 저장
     if (image != null) {
         _image = File(image!.path);
-        _currentPath = _image;
+        currentPath = _image;
         for(int i=0; i<=16; i++){
-          if(imageData[i].name == _currentName) {
+          if(imageData[i].name == currentName) {
             imageData[i].imgPath = File(image!.path);
           }
         }
@@ -50,8 +50,8 @@ class CameraPageController extends GetxController {
   }
 
   void pageChanged(int index) {
-    _currentName = imageData[index].name;
-    _currentPath = imageData[index].imgPath;
+    currentName = imageData[index].name;
+    currentPath = imageData[index].imgPath;
     update();
 }
 

@@ -20,6 +20,7 @@ class CameraPage extends StatefulWidget {
 class _CameraPageState extends State<CameraPage> {
 
   var controller = CameraPageController();
+  String _text = '머리';
 
   final PageController _pageController = PageController();
 
@@ -68,7 +69,7 @@ class _CameraPageState extends State<CameraPage> {
           ),
         ),
         Text(
-          controller._currentName,
+          controller.currentName,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -88,9 +89,9 @@ class _CameraPageState extends State<CameraPage> {
           onTap: () {
             setState(() {
               _text = images.name;
-              _current = images.imgPath;
+              controller.currentPath = images.imgPath;
             });
-            final index = imageData.indexWhere((item) => item.name == images.name);
+            final index = controller.imageData.indexWhere((item) => item.name == images.name);
             _pageController.animateToPage(
               index,
               duration: const Duration(milliseconds: 300),
@@ -250,7 +251,7 @@ class _CameraPageState extends State<CameraPage> {
                           child: Row(
                             children: [
                               for(int i = 0; i <= 16; i++) ... [
-                                _list(imageData[i]),
+                                _list(controller.imageData[i]),
                               ]
                             ],
                           )),
@@ -269,13 +270,13 @@ class _CameraPageState extends State<CameraPage> {
                         children: [
                           FloatingActionButton(
                               onPressed: () {
-                                getImage(ImageSource.camera);
+                                controller.getImage(ImageSource.camera);
                               },
                               heroTag: 'camera',
                               child: const Icon(Icons.add_a_photo)),
                           FloatingActionButton(
                             onPressed: () {
-                              getImage(ImageSource.gallery);
+                              controller.getImage(ImageSource.gallery);
                             },
                             heroTag: 'gallery',
                             child: const Icon(Icons.wallpaper),
@@ -315,15 +316,15 @@ class _CameraPageState extends State<CameraPage> {
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        _upGrid(imageData[i]),
-                                                        _upGrid(imageData[i+1]),
+                                                        _upGrid(controller.imageData[i]),
+                                                        _upGrid(controller.imageData[i+1]),
                                                       ],
                                                     ),
                                                   ],
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     children: [
-                                                      _upGrid(imageData[16]),
+                                                      _upGrid(controller.imageData[16]),
                                                     ],
                                                   )
                                                 ],
@@ -337,7 +338,7 @@ class _CameraPageState extends State<CameraPage> {
                                                   });
                                                   print('${showSpinner}');
 
-                                                  for (Images item in imageData) {
+                                                  for (Images item in controller.imageData) {
                                                     if (item.imgPath != null) {
                                                       await GallerySaver.saveImage(item.imgPath!.path)
                                                           .then((value) => print('save value = $value'))
@@ -348,7 +349,7 @@ class _CameraPageState extends State<CameraPage> {
                                                       //toastmsg('선택 이미지 없음');
                                                     }
                                                   }
-                                                  for (Images item in imageData) {
+                                                  for (Images item in controller.imageData) {
                                                     item.imgPath = null;
                                                   }
                                                   setState(() {
