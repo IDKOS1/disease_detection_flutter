@@ -5,7 +5,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:untitled/class/image_class.dart';
+import 'package:untitled/class/class.dart';
 import 'package:untitled/get_controller/camera_controller.dart';
 import 'package:untitled/layout/toast_message.dart';
 import 'package:untitled/screen/camera/camera_guide.dart';
@@ -67,11 +67,12 @@ class _CameraPageState extends State<CameraPage> {
             },
           ),
         ),
-        Text(
-          controller._currentName,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        Obx(() => Text(
+            controller.currentName.value!,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
@@ -80,47 +81,48 @@ class _CameraPageState extends State<CameraPage> {
 
 
   Widget _list(Images images) {
-    bool isSelected = _text == images.name;
-
-    return Column(
-      children: [
-        InkWell(
-          onTap: () {
-            setState(() {
-              _text = images.name;
-              _current = images.imgPath;
-            });
-            final index = imageData.indexWhere((item) => item.name == images.name);
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              border: isSelected
-                  ? Border(
-                  bottom: BorderSide(
-                    color: Colors.lightGreen[200]!,
-                    width: 2.0,
+    return Obx(() {
+      bool isSelected = controller.currentName.value == images.name;
+      return Column(
+        children: [
+          InkWell(
+            onTap: () {
+              setState(() {
+                controller.currentName.value = images.name;
+              });
+              final index = controller.imageData.indexWhere((item) =>
+              item.name == images.name);
+              _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            child: Container(
+                decoration: BoxDecoration(
+                  border: isSelected
+                      ? Border(
+                      bottom: BorderSide(
+                        color: Colors.lightGreen[200]!,
+                        width: 2.0,
+                      )
                   )
-              )
-                  : null,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-              child: Center(
-                child: Text(images.name,
-                  style: TextStyle(
-                    fontWeight: isSelected ? FontWeight.bold : null,
-                    fontSize: 18,
-                  ),
+                      : null,
                 ),
-              )
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                child: Center(
+                  child: Text(images.name,
+                    style: TextStyle(
+                      fontWeight: isSelected ? FontWeight.bold : null,
+                      fontSize: 18,
+                    ),
+                  ),
+                )
+            ),
           ),
-        ),
-      ],
+        ],
+      );
+    }
     );
   }
 
@@ -222,7 +224,7 @@ class _CameraPageState extends State<CameraPage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return cameraGuide(
-                                        currentPart: _text,
+                                        controller: controller,
                                       );
                                     }
                                 );
@@ -250,10 +252,11 @@ class _CameraPageState extends State<CameraPage> {
                           child: Row(
                             children: [
                               for(int i = 0; i <= 16; i++) ... [
-                                _list(imageData[i]),
+                                _list(controller.imageData[i]),
                               ]
                             ],
-                          )),
+                          )
+                      ),
                     ],
                   ),
                 ),
@@ -269,13 +272,13 @@ class _CameraPageState extends State<CameraPage> {
                         children: [
                           FloatingActionButton(
                               onPressed: () {
-                                getImage(ImageSource.camera);
+                                controller.getImage(ImageSource.camera);
                               },
                               heroTag: 'camera',
                               child: const Icon(Icons.add_a_photo)),
                           FloatingActionButton(
                             onPressed: () {
-                              getImage(ImageSource.gallery);
+                              controller.getImage(ImageSource.gallery);
                             },
                             heroTag: 'gallery',
                             child: const Icon(Icons.wallpaper),
@@ -315,15 +318,15 @@ class _CameraPageState extends State<CameraPage> {
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        _upGrid(imageData[i]),
-                                                        _upGrid(imageData[i+1]),
+                                                        _upGrid(controller.imageData[i]),
+                                                        _upGrid(controller.imageData[i+1]),
                                                       ],
                                                     ),
                                                   ],
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     children: [
-                                                      _upGrid(imageData[16]),
+                                                      _upGrid(controller.imageData[16]),
                                                     ],
                                                   )
                                                 ],
@@ -337,7 +340,7 @@ class _CameraPageState extends State<CameraPage> {
                                                   });
                                                   print('${showSpinner}');
 
-                                                  for (Images item in imageData) {
+                                                  for (Images item in controller.imageData) {
                                                     if (item.imgPath != null) {
                                                       await GallerySaver.saveImage(item.imgPath!.path)
                                                           .then((value) => print('save value = $value'))
@@ -348,7 +351,7 @@ class _CameraPageState extends State<CameraPage> {
                                                       //toastmsg('선택 이미지 없음');
                                                     }
                                                   }
-                                                  for (Images item in imageData) {
+                                                  for (Images item in controller.imageData) {
                                                     item.imgPath = null;
                                                   }
                                                   setState(() {

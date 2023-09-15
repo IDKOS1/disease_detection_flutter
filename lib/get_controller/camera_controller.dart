@@ -56,7 +56,7 @@ class CameraPageController extends GetxController {
 
   final picker = ImagePicker();
   //Rx<File> currentPath = Rx<File>(File(''));
-  RxString currentName = '유안측 0도'.obs;
+  Rx<String?> currentName = '유안측 0도'.obs;
 
   // 카메라 혹은 갤러리에서 불러온 이미지를 현재 선택한 부위와 동일 이름 리스트에 저장
   Future getImage(ImageSource imageSource) async {
@@ -74,9 +74,12 @@ class CameraPageController extends GetxController {
   }
 
 
+
   void pageChanged(int index) {
     currentName.value = imageData[index].name;
     currentIndex.value = index;
     print('current index = ${index}');
+    print('index.value = ${currentIndex.value}');
+    print('name.value= ${currentName.value}');
   }
 }
