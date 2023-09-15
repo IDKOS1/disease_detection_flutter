@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:untitled/screen/result/result.dart';
 import 'package:untitled/screen/setting_page.dart';
 
 import '../get_controller/navigator_controller.dart';
@@ -22,7 +23,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
     super.initState();
     _pages = [
       CameraPage(),
-      Text('result'),
+      ResultPage(),
       SettingPage()
     ];
   }

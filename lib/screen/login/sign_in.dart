@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:untitled/screen/login/sign_up.dart';
 import 'package:untitled/screen/navigator_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -26,9 +27,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             child: Stack(
               children: [
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('imgs/background.png'),
+                          image: AssetImage('imgs/background1.png'),
                           fit: BoxFit.fill
                       )
                   ),),
@@ -55,24 +56,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          component1(Icons.account_circle_outlined,
-                              'User name...', false, false),
                           component1(
-                              Icons.lock_outline, 'Password...', true, false),
+                              Icons.email, '이메일', false, true),
+                          component1(
+                              Icons.lock_outline, '비밀번호', true, false),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               component2(
-                                'LOGIN',
+                                '로그인',
                                 2.58,
                                     () {
-                                  HapticFeedback.lightImpact();
                                   Get.offAll(() => NavigatorPage());
                                 },
                               ),
                               SizedBox(width: size.width / 20),
                               component2(
-                                'Forgotten password!',
+                                '회원 찾기',
                                 2.58,
                                     () {
                                   HapticFeedback.lightImpact();
@@ -91,12 +91,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           component2(
-                            'Create a new Account',
+                            '회원가입',
                             2,
                                 () {
-                              HapticFeedback.lightImpact();
-                              Fluttertoast.showToast(
-                                  msg: 'Create a new account button pressed');
+                              Get.to(()=>SignUpPage());
                             },
                           ),
                           SizedBox(height: size.height * .05),
@@ -124,7 +122,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           sigmaX: 15,
         ),
         child: Container(
-          height: size.width / 8,
+          height: size.height / 17,
           width: size.width / 1.2,
           alignment: Alignment.center,
           padding: EdgeInsets.only(right: size.width / 30),
@@ -166,7 +164,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           splashColor: Colors.transparent,
           onTap: voidCallback,
           child: Container(
-            height: size.width / 8,
+            height: size.height / 17,
             width: size.width / width,
             alignment: Alignment.center,
             decoration: BoxDecoration(
