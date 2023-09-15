@@ -26,7 +26,7 @@ class _CameraPageState extends State<CameraPage> {
   //이미지를 보여주는 위젯
   Widget showImage() {
     final heightSize = MediaQuery.of(context).size.height;
-    return Column(
+    return Obx(() => Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
@@ -67,15 +67,15 @@ class _CameraPageState extends State<CameraPage> {
             },
           ),
         ),
-        Obx(() => Text(
-            controller.currentName.value!,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+        Text(
+          controller.currentName.value!,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],
+    )
     );
   }
 

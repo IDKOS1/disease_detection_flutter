@@ -16,7 +16,7 @@ class ResultPage extends StatelessWidget {
       final random = Random();
       late String disease;
 
-      // 테스트 Result 값 생성
+      // 테스트 Result 값 랜덤 생성
       for(int i = 0; i < 25; i++) {
         int randomInt = random.nextInt(1000);
         double randomDouble = randomInt / 1000;

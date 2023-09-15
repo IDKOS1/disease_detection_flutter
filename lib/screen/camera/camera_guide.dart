@@ -58,7 +58,6 @@ class _cameraGuideState extends State<cameraGuide> {
               Center(
                 child: Column(
                   children: [
-                    Text('현재 ${controller.guideList[index].name} ${index}'),
                     Text('각도 예시',
                       style: TextStyle(
                           fontWeight: FontWeight.bold
