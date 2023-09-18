@@ -158,6 +158,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                 return;
                               }
 
+
                               String birth = '${date.year}-${date.month}-${date.day}';
 
                               await controller.registerUser(_email.text, _password.text, _name.text,
