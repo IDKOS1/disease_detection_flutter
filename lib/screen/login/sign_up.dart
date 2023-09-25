@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -7,9 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:untitled/screen/login/sign_in.dart';
-import 'package:untitled/screen/navigator_page.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:untitled/get_controller/url_controller.dart';
 
@@ -96,18 +91,18 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text('계정이 있으신가요?',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12
-                                  )),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12
+                                    )),
                                 TextButton(
                                     onPressed: () {
                                       Get.back();
                                     },
                                     child: Text('로그인 하러 가기',
-                                    style: TextStyle(
-                                      fontSize: 12
-                                    ),))
+                                      style: TextStyle(
+                                          fontSize: 12
+                                      ),))
                               ],
                             ),
                           ],
@@ -123,7 +118,6 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                             '계정 생성', 2,
                                 () async {
                               controller.showSpinner.value = true;
-                              print(controller.showSpinner.value);
                               if(_email.text.isEmpty || !_email.text.contains('@')) {
                                 Fluttertoast.showToast(msg: '이메일을 확인해 주세요.');
                                 controller.showSpinner.value = false;
@@ -132,12 +126,16 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                 Fluttertoast.showToast(msg: '비밀번호를 확인해 주세요.');
                                 controller.showSpinner.value = false;
                                 return;
-                              } else if (_passwordCheck.text.isEmpty){
+                              }  else if (_passwordCheck.text.isEmpty){
                                 Fluttertoast.showToast(msg: '비밀번호 확인을 입력 해주세요');
                                 controller.showSpinner.value = false;
                                 return;
                               } else if (_password.text != _passwordCheck.text){
                                 Fluttertoast.showToast(msg: '비밀번호와 비밀번호 확인이 다릅니다.');
+                                controller.showSpinner.value = false;
+                                return;
+                              } else if (_password.text.length < 8){
+                                Fluttertoast.showToast(msg: '비밀번호를 8자리 이상 입력해 주세요.');
                                 controller.showSpinner.value = false;
                                 return;
                               } else if (_name.text.isEmpty) {
@@ -157,8 +155,6 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                 controller.showSpinner.value = false;
                                 return;
                               }
-
-
                               String birth = '${date.year}-${date.month}-${date.day}';
 
                               await controller.registerUser(_email.text, _password.text, _name.text,
@@ -259,11 +255,11 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
           ),
           child: DropdownButton<String>(
             value: _farm.text,
-              onChanged: (String? value) {
-                setState(() {
-                  _farm.text = value!;
-                });
-              },
+            onChanged: (String? value) {
+              setState(() {
+                _farm.text = value!;
+              });
+            },
             items: farmList.map((value) {
               return DropdownMenuItem<String>(
                 value: value,
@@ -361,10 +357,10 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
             children: [
               SizedBox(width: 10,),
               Icon(icon,
-                    color: Colors.white.withOpacity(.7)),
+                  color: Colors.white.withOpacity(.7)),
               SizedBox(width: 10,),
               Text('생년월일',
-               style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(.5))),
+                  style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(.5))),
               SizedBox(width: 40,),
               ElevatedButton(
                 child: Text(
@@ -386,9 +382,9 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(.1),
-                  foregroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
+                    backgroundColor: Colors.white.withOpacity(.1),
+                    foregroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
                 ),
               ),
             ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:untitled/class/class.dart';
 import 'dart:math';
+import 'package:fl_chart/fl_chart.dart';
 
 
 class ResultPage extends StatelessWidget {
@@ -40,16 +42,13 @@ class ResultPage extends StatelessWidget {
         results.add(Results(date:randomDate, result:result, percent:randomDouble, disease: disease));
       }
 
-
-
     return SafeArea(
         child: Scaffold(
           appBar: AppBar(
             title: Text('결과 확인'),
             centerTitle: true,
-            backgroundColor: Colors.blue.shade100,
+            backgroundColor: Colors.blueAccent,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))
             ),
           ),
           body: ListView.builder(
@@ -101,62 +100,308 @@ class Result extends StatelessWidget {
       resultColor = Colors.grey;
     }
 
-
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('${ResultData.date.year - 2000}년 ${ResultData.date.month}월 ${ResultData.date.day}일'
-                  ' ${ResultData.date.hour}시 ${ResultData.date.minute}분 업로드 결과',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),),
-              Text(result,
-                style: TextStyle(
+    return InkWell(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('${ResultData.date.year - 2000}년 ${ResultData.date.month}월 ${ResultData.date.day}일'
+                    ' ${ResultData.date.hour}시 ${ResultData.date.minute}분 업로드 결과',
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: resultColor,
-                    //decoration: TextDecoration.underline,
-                    decorationColor: resultColor,
-                    decorationStyle: TextDecorationStyle.solid,
-                    decorationThickness: 2
-                ),
-              )
-            ],
+                    fontSize: 15,
+                  ),),
+                Text(result,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: resultColor,
+                      //decoration: TextDecoration.underline,
+                      decorationColor: resultColor,
+                      decorationStyle: TextDecorationStyle.solid,
+                      decorationThickness: 2
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 3,),
-        SimpleAnimationProgressBar(
-          height: 4,
-          width: 370,
-          backgroundColor: Colors.grey.shade300,
-          foregrondColor: resultColor,
-          ratio: value,
-          direction: Axis.horizontal,
-          curve: Curves.fastLinearToSlowEaseIn,
-          duration: const Duration(seconds: 3),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('병명: ${ResultData.disease}'),
-              Text('${(value * 100).toStringAsFixed(1)} %',
-              style: TextStyle(
-                color: resultColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-              ),),
-            ],
+          SizedBox(height: 3,),
+          SimpleAnimationProgressBar(
+            height: 4,
+            width: 370,
+            backgroundColor: Colors.grey.shade300,
+            foregrondColor: resultColor,
+            ratio: value,
+            direction: Axis.horizontal,
+            curve: Curves.fastLinearToSlowEaseIn,
+            duration: const Duration(seconds: 3),
           ),
-        )
-      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('병명: ${ResultData.disease}'),
+                Text('${(value * 100).toStringAsFixed(1)} %',
+                style: TextStyle(
+                  color: resultColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold
+                ),),
+              ],
+            ),
+          )
+        ],
+      ),
+      onTap: () {
+        Get.to(() => Detail());
+      }
     );
   }
 }
+
+class Detail extends StatelessWidget {
+  Detail({super.key});
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: CustomScrollView(
+        physics: ClampingScrollPhysics(),
+        slivers: <Widget>[
+          SliverAppBar(
+            toolbarHeight: 60,
+            backgroundColor: Colors.green,
+            floating: true, // 스크롤 시에 AppBar가 사라지지 않도록 설정
+            pinned: false, // 스크롤을 아래로 내릴 때 AppBar를 고정
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text('상세 정보'),
+            ),
+          ),
+          SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                      width: size.width,
+                      height: size.height/2,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 40, 0, 10),
+                        child: BarChart(
+                          BarChartData(
+                            barTouchData: barTouchData,
+                            titlesData: titlesData,
+                            borderData: borderData,
+                            barGroups: barGroups,
+                            gridData: FlGridData(
+                                show: true,
+                              drawVerticalLine: false,
+                              getDrawingHorizontalLine: (value) => FlLine(
+                                color: Colors.grey.withOpacity(0.7),
+                                strokeWidth: 0.6
+                              ),
+                            ),
+                            alignment: BarChartAlignment.spaceAround,
+                            maxY: 100,
+                          ),
+
+                          swapAnimationDuration: Duration(milliseconds: 150), // Optional
+                          swapAnimationCurve: Curves.linear,
+                        ),
+                      )
+                  ),
+                  Placeholder(),
+                  Placeholder(),
+                ],
+              ))
+        ],
+      ),
+    );
+  }
+}
+
+BarTouchData get barTouchData => BarTouchData(
+  enabled: false,
+  touchTooltipData: BarTouchTooltipData(
+    tooltipBgColor: Colors.transparent,
+    tooltipPadding: EdgeInsets.zero,
+    tooltipMargin: 8,
+    getTooltipItem: (
+        BarChartGroupData group,
+        int groupIndex,
+        BarChartRodData rod,
+        int rodIndex,
+        ) {
+      return BarTooltipItem(
+          rod.toY.toStringAsFixed(1) + '%',
+        const TextStyle(
+          color: Colors.purple,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    },
+  ),
+);
+
+Widget getTitles(double value, TitleMeta meta) {
+  final style = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.bold,
+    fontSize: 10,
+  );
+  String text;
+  switch (value.toInt()) {
+    case 0:
+      text = '에드워드';
+      break;
+    case 1:
+      text = '비브리오';
+      break;
+    case 2:
+      text = '연쇄구균';
+      break;
+    case 3:
+      text = '활주세균';
+      break;
+    case 4:
+      text = '여윔증';
+      break;
+    case 5:
+      text = '스쿠티카';
+      break;
+    case 6:
+      text = 'VHSV';
+      break;
+    default:
+      text = '';
+      break;
+  }
+  return SideTitleWidget(
+    axisSide: meta.axisSide,
+    space: 4,
+    child: Text(text, style: style),
+  );
+}
+
+FlTitlesData get titlesData => FlTitlesData(
+  show: true,
+  bottomTitles: AxisTitles(
+    sideTitles: SideTitles(
+      showTitles: true,
+      reservedSize: 30,
+      getTitlesWidget: getTitles,
+    ),
+  ),
+  leftTitles: const AxisTitles(
+    sideTitles: SideTitles(
+        showTitles: true,
+        reservedSize: 35
+    ),
+  ),
+  topTitles: const AxisTitles(
+    sideTitles: SideTitles(showTitles: false),
+  ),
+  rightTitles: const AxisTitles(
+    sideTitles: SideTitles(showTitles: false),
+  ),
+);
+
+// 차트 구분선
+FlBorderData get borderData => FlBorderData(
+  show: false,
+);
+
+//차트 그라데이션
+LinearGradient get _barsGradient => LinearGradient(
+  colors: [
+    Colors.purple,
+    Colors.cyan
+  ],
+  begin: Alignment.bottomCenter,
+  end: Alignment.topCenter,
+);
+
+List<BarChartGroupData> get barGroups => [
+  BarChartGroupData(
+    x: 0,
+    barRods: [
+      BarChartRodData(
+        toY: 100,
+        gradient: _barsGradient,
+      )
+    ],
+    showingTooltipIndicators: [0],
+  ),
+  BarChartGroupData(
+    x: 1,
+    barRods: [
+      BarChartRodData(
+        toY: 80,
+        gradient: _barsGradient,
+      )
+    ],
+    showingTooltipIndicators: [0],
+  ),
+  BarChartGroupData(
+    x: 2,
+    barRods: [
+      BarChartRodData(
+        toY: 70,
+        gradient: _barsGradient,
+      )
+    ],
+    showingTooltipIndicators: [0],
+  ),
+  BarChartGroupData(
+    x: 3,
+    barRods: [
+      BarChartRodData(
+        toY: 55.5,
+        gradient: _barsGradient,
+      )
+    ],
+    showingTooltipIndicators: [0],
+  ),
+  BarChartGroupData(
+    x: 4,
+    barRods: [
+      BarChartRodData(
+        toY: 30,
+        gradient: _barsGradient,
+      )
+    ],
+    showingTooltipIndicators: [0],
+  ),
+  BarChartGroupData(
+    x: 5,
+    barRods: [
+      BarChartRodData(
+        toY: 20,
+        gradient: _barsGradient,
+      )
+    ],
+    showingTooltipIndicators: [0],
+  ),
+  BarChartGroupData(
+    x: 6,
+    barRods: [
+      BarChartRodData(
+        toY: 0,
+        gradient: _barsGradient,
+      )
+    ],
+    showingTooltipIndicators: [0],
+  ),
+];
+
+
+
+
+
+
 

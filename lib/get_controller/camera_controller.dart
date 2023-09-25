@@ -1,12 +1,18 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:untitled/class/class.dart';
+import 'package:untitled/layout/toast_message.dart';
 
 class CameraPageController extends GetxController {
   static CameraPageController get to => Get.find();
   RxInt currentIndex = 0.obs;
+  RxBool showSpinner = false.obs;
+
   static List<String> imgName = [
     '유안측 0도',
     '유안측 45도',
@@ -73,9 +79,30 @@ class CameraPageController extends GetxController {
     }
   }
 
+  //촬영 이미지를 서버로 전송하는 코드
+  Future imageUpload () async {
+    showSpinner.value = true;
+    // 각 이미지별 처리하는 코드
+    for (int i = 1; i <= imageData.length; i++) {
+      if (imageData[i].imgPath != null) {
+        await GallerySaver.saveImage(imageData[i].imgPath!.path)
+            .then((value) => print('save value = $value'))
+            .catchError((e) {
+          print('error : ($e)');
+        });
+      } else {
+        //
+      }
+      imageData[i].imgPath = null;
+    }
+
+    showSpinner.value = false;
+    toastmsg('업로드 완료');
+  }
 
 
-  void pageChanged(int index) {
+
+  void pageChanged(int index)  {
     currentName.value = imageData[index].name;
     currentIndex.value = index;
     print('current index = ${index}');

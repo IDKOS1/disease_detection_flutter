@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,8 +21,7 @@ class CameraPage extends StatefulWidget {
 class _CameraPageState extends State<CameraPage> {
 
   var controller = CameraPageController();
-
-  final PageController _pageController = PageController();
+  final PageController pageController = PageController();
 
   //이미지를 보여주는 위젯
   Widget showImage() {
@@ -33,7 +33,7 @@ class _CameraPageState extends State<CameraPage> {
           height: heightSize /2.3,
           child: PageView.builder(
             scrollDirection: Axis.horizontal,
-            controller: _pageController,
+            controller: pageController,
             itemCount: controller.imageData.length,
             itemBuilder: (context, index) {
               final images = controller.imageData[index];
@@ -63,8 +63,10 @@ class _CameraPageState extends State<CameraPage> {
               );
             },
             onPageChanged: (index) {
+                print(index);
                 controller.pageChanged(index);
             },
+
           ),
         ),
         Text(
@@ -87,16 +89,15 @@ class _CameraPageState extends State<CameraPage> {
         children: [
           InkWell(
             onTap: () {
-              setState(() {
-                controller.currentName.value = images.name;
-              });
+              controller.currentName.value = images.name;
               final index = controller.imageData.indexWhere((item) =>
               item.name == images.name);
-              _pageController.animateToPage(
+              pageController.animateToPage(
                 index,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
+              print("_list의 index: $index");
             },
             child: Container(
                 decoration: BoxDecoration(
@@ -187,7 +188,6 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
-  bool showSpinner = false;
   @override
   Widget build(BuildContext context) {
     // 화면 세로 고정
@@ -223,9 +223,7 @@ class _CameraPageState extends State<CameraPage> {
                                 showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return cameraGuide(
-                                        controller: controller,
-                                      );
+                                      return cameraGuide(controller: controller,);
                                     }
                                 );
                               },
@@ -291,9 +289,20 @@ class _CameraPageState extends State<CameraPage> {
                         children: [
                           ElevatedButton(
                             child: const Text("이미지 저장"),
-                            onPressed: () {
-
-                            },
+                            onPressed: () async {
+                            for (Images item in controller.imageData) {
+                              if (item.imgPath != null) {
+                                await GallerySaver.saveImage(item.imgPath!.path)
+                                    .then((value) => print('save value = $value'))
+                                    .catchError((err) {
+                                  print('error : ($err');
+                                });
+                              } else {
+                                //toastmsg('선택 이미지 없음');
+                              }
+                            }
+                            Fluttertoast.showToast(msg: "저장 되었습니다.");
+                          },
                           ),
 
                           ElevatedButton(
@@ -305,7 +314,7 @@ class _CameraPageState extends State<CameraPage> {
                                     return StatefulBuilder(
                                       builder: (context, setState) {
                                         return ModalProgressHUD(
-                                          inAsyncCall: showSpinner,
+                                          inAsyncCall: controller.showSpinner.value,
                                           child: AlertDialog(
                                             title: const Text('정말 업로드 하시겠습니까?',
                                               style: TextStyle(fontSize: 20),
@@ -335,40 +344,55 @@ class _CameraPageState extends State<CameraPage> {
                                             actions: [
                                               TextButton(
                                                 onPressed: () async {
-                                                  setState(() {
-                                                    showSpinner = true;
-                                                  });
-                                                  print('${showSpinner}');
+                                                  print('업로드 클릭');
+                                                  // 누락된 이미지가 있는지 확인하는 코드
+                                                  if (controller.imageData.any((image) => image.imgPath == null)) {
+                                                    print("미촬영된 이미지");
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return AlertDialog(
+                                                          title: Text(
+                                                              '미촬영된 이미지가 있습니다.',
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                          ),),
+                                                          content: Text(
+                                                              '정말 업로드 하시겠습니까?'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Get.back();
+                                                                controller.imageUpload();
+                                                              },
+                                                              child: const Text(
+                                                                  '확인'),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Get.back();
+                                                              },
+                                                              child: const Text(
+                                                                  '취소'),
+                                                            )
 
-                                                  for (Images item in controller.imageData) {
-                                                    if (item.imgPath != null) {
-                                                      await GallerySaver.saveImage(item.imgPath!.path)
-                                                          .then((value) => print('save value = $value'))
-                                                          .catchError((err) {
-                                                        print('error : ($err');
-                                                      });
-                                                    } else {
-                                                      //toastmsg('선택 이미지 없음');
-                                                    }
+                                                          ],
+                                                        );
+                                                      }
+                                                    );
+                                                  } else {
+                                                    print("누락된 촬영 없음");
+                                                    controller.imageUpload();
+                                                    // 다이얼로그 닫기
+                                                    Get.back();
                                                   }
-                                                  for (Images item in controller.imageData) {
-                                                    item.imgPath = null;
-                                                  }
-                                                  setState(() {
-                                                    showSpinner = false;
-                                                  });
-                                                  print('${showSpinner}');
-
-                                                  toastmsg('업로드 완료');
-                                                  // 다이얼로그 닫기
-                                                  Navigator.of(context).pop();
                                                 },
                                                 child: const Text('업로드'),
                                               ),
                                               TextButton(
                                                 onPressed: () {
                                                   // 다이얼로그 닫기
-                                                  Navigator.of(context).pop();
+                                                  Get.back();
                                                 },
                                                 child: const Text('닫기'),
                                               ),
