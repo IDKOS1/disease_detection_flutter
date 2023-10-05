@@ -16,7 +16,10 @@ void main() async {
   final controller = Get.put(UrlController());
 
   Future<bool> checkToken = controller.checkToken(token);
-
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+    ),
+  );
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
@@ -24,8 +27,8 @@ void main() async {
         colorSchemeSeed: Colors.blue,
         useMaterial3: true
       ),
-      home: await checkToken ? NavigatorPage() : LoginPage(),
-      title: "Animated-Login-Page-UI",
+      home: await checkToken ? const NavigatorPage() : LoginPage(),
+
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -33,10 +36,5 @@ void main() async {
       ],
     ),
   );
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Colors.black,
-      statusBarIconBrightness: Brightness.light,
-    ),
-  );
+
 }

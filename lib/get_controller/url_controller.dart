@@ -15,36 +15,38 @@ class UrlController extends GetxController {
 
   Future<void> registerUser(String email, String password, String username, String birth, String gender, String number, String farm) async {
     print(url.resolve('/register/signup/'));
-    try{
-    final response = await http.post(
-        url.resolve('/register/signup/'),
-        headers: <String, String> {
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
-        body: jsonEncode(<String, String> {
-          'email': email,
-          'password': password,
-          'username': username,
-          'birth': birth,
-          'gender': gender,
-          'number': number,
-          'farm': farm
-        })
-    ).timeout(const Duration(seconds: 20));
+d    try {
+      final response = await http.post(
+          url.resolve('/register/signup/'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8'
+          },
+          body: jsonEncode(<String, String>{
+            'email': email,
+            'password': password,
+            'username': username,
+            'birth': birth,
+            'gender': gender,
+            'number': number,
+            'farm': farm
+          })
+      ).timeout(const Duration(seconds: 20));
 
-    print("응답코드: ${response.statusCode}");
-    if (response.statusCode == 200) {
-      Fluttertoast.showToast(msg: '회원가입이 완료 되었습니다.');
-      print("token${json.decode(response.body)["Token"]}");
-      Get.back();
-    } else {
-      Fluttertoast.showToast(msg: '[${response.statusCode}] 에러 발생.');
+      print("응답코드: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(msg: '회원가입이 완료 되었습니다.');
+        print("token${json.decode(response.body)["Token"]}");
+        Get.back();
+      } else if (response.statusCode == 400){
+        Fluttertoast.showToast(msg: '${response.body}');
+      } else {
+        Fluttertoast.showToast(msg: '[${response.statusCode}] 에러 발생.');
+      }
+      } catch (e) {
+        print("서버에 접근할 수 없음: $e");
+        Fluttertoast.showToast(msg: '서버에 접근할 수 없습니다.');
+      }
     }
-  } catch (e) {
-      print("서버에 접근할 수 없음: $e");
-      Fluttertoast.showToast(msg: '서버에 접근할 수 없습니다. 인터넷 연결을 확인하세요.');
-    }
-  }
 
   Future<void> tryLogin (String email, String password) async {
     final box = GetStorage();
@@ -80,37 +82,39 @@ class UrlController extends GetxController {
     } catch (e) {
       showSpinner.value = false;
       print("에러 발생: $e");
-      Fluttertoast.showToast(msg: '에러 발생 $e');
+      Fluttertoast.showToast(msg: '서버에 접근할 수 없습니다.');
     }
   }
 
-  Future<bool> checkToken (String? token) async {
-    print('토큰:$token');
+  Future<bool> checkToken(String? token) async {
+    print('토큰: $token');
+
     if (token != null) {
       try {
         final response = await http.post(
-            url.resolve('/register/checkToken/'),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-              'Authorization': 'Token $token'
-            },
+          url.resolve('/register/checkToken/'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Token $token',
+          },
         ).timeout(const Duration(seconds: 20));
+
         print("응답코드: ${response.statusCode}");
+
         if (response.statusCode == 200) {
-          Fluttertoast.showToast(msg: '로그인 되었습니다.');
+          Fluttertoast.showToast(msg: '${response.body}');
           return true;
         } else {
-          print(json.decode(response.body)["message"]);
+          Fluttertoast.showToast(msg: '${response.body}');
           return false;
         }
       } catch (e) {
-        print('error:$e');
+        print('네트워크 오류: $e');
         return false;
       }
     } else {
       print('토큰 없음');
       return false;
     }
-  }
-}
+  }}
 

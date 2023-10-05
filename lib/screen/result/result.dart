@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:untitled/class/class.dart';
@@ -15,56 +16,78 @@ class ResultPage extends StatelessWidget {
     List<String> diseaseName = ['확인중','에드워드병', '비브리오병', '연쇄구균병', '활주세균병',
       '여윔증', '스쿠티카병', 'VHSV'];
 
-      final random = Random();
-      late String disease;
+    final random = Random();
+    late String disease;
 
-      // 테스트 Result 값 랜덤 생성
-      for(int i = 0; i < 25; i++) {
-        int randomInt = random.nextInt(1000);
-        double randomDouble = randomInt / 1000;
-        DateTime start = DateTime(2022, 1, 1);
-        DateTime end = DateTime.now();
-        Duration difference = end.difference(start);
+    // 테스트 Result 값 랜덤 생성
+    for(int i = 0; i < 25; i++) {
+      int randomInt = random.nextInt(1000);
+      double randomDouble = randomInt / 1000;
+      DateTime start = DateTime(2022, 1, 1);
+      DateTime end = DateTime.now();
+      Duration difference = end.difference(start);
 
-        Duration randomDuration = Duration(seconds: random.nextInt(difference.inSeconds));
-        DateTime randomDate = start.add(randomDuration);
+      Duration randomDuration = Duration(seconds: random.nextInt(difference.inSeconds));
+      DateTime randomDate = start.add(randomDuration);
 
-        bool result;
-        if(randomInt%5 != 0){
-          result = true;
-          disease = diseaseName[randomInt%7+1];
-        } else{
-          result = false;
-          randomDouble = 0;
-          disease = diseaseName[0];
-        }
-
-        results.add(Results(date:randomDate, result:result, percent:randomDouble, disease: disease));
+      bool result;
+      if(randomInt%5 != 0){
+        result = true;
+        disease = diseaseName[randomInt%7+1];
+      } else{
+        result = false;
+        randomDouble = 0;
+        disease = diseaseName[0];
       }
 
-    return SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('결과 확인'),
-            centerTitle: true,
-            backgroundColor: Colors.blueAccent,
-            shape: RoundedRectangleBorder(
+      results.add(Results(date:randomDate, result:result, percent:randomDouble, disease: disease));
+    }
+    if(results != null) {
+      return SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: CustomScrollView(
+              physics: const ClampingScrollPhysics(),
+              slivers: <Widget>[
+                const SliverAppBar(
+                  toolbarHeight: 60,
+                  backgroundColor: Colors.blueAccent,
+                  floating: true,
+                  pinned: false, // 스크롤을 아래로 내릴 때 AppBar를 고정
+                  shape: ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15)
+                      )
+                  ),
+                  flexibleSpace: FlexibleSpaceBar(
+                    centerTitle: true,
+                    title: Text('결과 확인'),
+                  ),
+                ),
+                SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                            (BuildContext context, index) {
+                          results.sort((a, b) => b.date.compareTo(a.date));
+                          return Column(
+                            children: [
+                              Result(ResultData: results[index]),
+                              Divider(color: Colors.grey.withOpacity(0.3)),
+                            ],
+                          );
+                        },
+                        childCount: results.length
+                    )
+                )
+              ],
             ),
-          ),
-          body: ListView.builder(
-            itemCount: results.length,
-              itemBuilder: (BuildContext context, int index) {
-                results.sort((a, b) => b.date.compareTo(a.date)); // 날자순 정리
-                return Column(
-                    children: [
-                      Result(ResultData: results[index]),
-                      Divider(color: Colors.grey.withOpacity(0.3)),
-                    ]
-                );
-              }
-          ),
-        )
-    );
+
+          )
+      );
+    } else{
+      // results가 null인 경우에 대한 처리
+      return const CircularProgressIndicator(); // 또는 다른 대체 화면을 표시할 수 있음
+    }
   }
 
 }
@@ -101,64 +124,64 @@ class Result extends StatelessWidget {
     }
 
     return InkWell(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${ResultData.date.year - 2000}년 ${ResultData.date.month}월 ${ResultData.date.day}일'
-                    ' ${ResultData.date.hour}시 ${ResultData.date.minute}분 업로드 결과',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),),
-                Text(result,
-                  style: TextStyle(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('${ResultData.date.year - 2000}년 ${ResultData.date.month}월 ${ResultData.date.day}일'
+                      ' ${ResultData.date.hour}시 ${ResultData.date.minute}분 업로드 결과',
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: resultColor,
-                      //decoration: TextDecoration.underline,
-                      decorationColor: resultColor,
-                      decorationStyle: TextDecorationStyle.solid,
-                      decorationThickness: 2
-                  ),
-                )
-              ],
+                      fontSize: 15,
+                    ),),
+                  Text(result,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: resultColor,
+                        //decoration: TextDecoration.underline,
+                        decorationColor: resultColor,
+                        decorationStyle: TextDecorationStyle.solid,
+                        decorationThickness: 2
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 3,),
-          SimpleAnimationProgressBar(
-            height: 4,
-            width: 370,
-            backgroundColor: Colors.grey.shade300,
-            foregrondColor: resultColor,
-            ratio: value,
-            direction: Axis.horizontal,
-            curve: Curves.fastLinearToSlowEaseIn,
-            duration: const Duration(seconds: 3),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('병명: ${ResultData.disease}'),
-                Text('${(value * 100).toStringAsFixed(1)} %',
-                style: TextStyle(
-                  color: resultColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
-                ),),
-              ],
+            const SizedBox(height: 3,),
+            SimpleAnimationProgressBar(
+              height: 4,
+              width: 370,
+              backgroundColor: Colors.grey.shade300,
+              foregrondColor: resultColor,
+              ratio: value,
+              direction: Axis.horizontal,
+              curve: Curves.fastLinearToSlowEaseIn,
+              duration: const Duration(seconds: 3),
             ),
-          )
-        ],
-      ),
-      onTap: () {
-        Get.to(() => Detail());
-      }
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('병명: ${ResultData.disease}'),
+                  Text('${(value * 100).toStringAsFixed(1)} %',
+                    style: TextStyle(
+                        color: resultColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                    ),),
+                ],
+              ),
+            )
+          ],
+        ),
+        onTap: () {
+          Get.to(() => Detail());
+        }
     );
   }
 }
@@ -168,58 +191,66 @@ class Detail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
-        physics: ClampingScrollPhysics(),
-        slivers: <Widget>[
-          SliverAppBar(
-            toolbarHeight: 60,
-            backgroundColor: Colors.green,
-            floating: true, // 스크롤 시에 AppBar가 사라지지 않도록 설정
-            pinned: false, // 스크롤을 아래로 내릴 때 AppBar를 고정
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Text('상세 정보'),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: CustomScrollView(
+          physics: const ClampingScrollPhysics(),
+          slivers: <Widget>[
+            const SliverAppBar(
+              toolbarHeight: 60,
+              backgroundColor: Colors.green,
+              floating: true,
+              pinned: false, // 스크롤을 아래로 내릴 때 AppBar를 고정
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15)
+                  )
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text('상세 정보'),
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                      width: size.width,
-                      height: size.height/2,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(0, 40, 0, 10),
-                        child: BarChart(
-                          BarChartData(
-                            barTouchData: barTouchData,
-                            titlesData: titlesData,
-                            borderData: borderData,
-                            barGroups: barGroups,
-                            gridData: FlGridData(
+            SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                        width: size.width,
+                        height: size.height/2,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 40, 0, 10),
+                          child: BarChart(
+                            BarChartData(
+                              barTouchData: barTouchData,
+                              titlesData: titlesData,
+                              borderData: borderData,
+                              barGroups: barGroups,
+                              gridData: FlGridData(
                                 show: true,
-                              drawVerticalLine: false,
-                              getDrawingHorizontalLine: (value) => FlLine(
-                                color: Colors.grey.withOpacity(0.7),
-                                strokeWidth: 0.6
+                                drawVerticalLine: false,
+                                getDrawingHorizontalLine: (value) => FlLine(
+                                    color: Colors.grey.withOpacity(0.7),
+                                    strokeWidth: 0.6
+                                ),
                               ),
+                              alignment: BarChartAlignment.spaceAround,
+                              maxY: 100,
                             ),
-                            alignment: BarChartAlignment.spaceAround,
-                            maxY: 100,
-                          ),
 
-                          swapAnimationDuration: Duration(milliseconds: 150), // Optional
-                          swapAnimationCurve: Curves.linear,
-                        ),
-                      )
-                  ),
-                  Placeholder(),
-                  Placeholder(),
-                ],
-              ))
-        ],
+                            swapAnimationDuration: const Duration(milliseconds: 150), // Optional
+                            swapAnimationCurve: Curves.linear,
+                          ),
+                        )
+                    ),
+                    const Placeholder(),
+                    const Placeholder(),
+                  ],
+                ))
+          ],
+        ),
       ),
     );
   }
@@ -238,7 +269,7 @@ BarTouchData get barTouchData => BarTouchData(
         int rodIndex,
         ) {
       return BarTooltipItem(
-          rod.toY.toStringAsFixed(1) + '%',
+        '${rod.toY.toStringAsFixed(1)}%',
         const TextStyle(
           color: Colors.purple,
           fontWeight: FontWeight.bold,
@@ -249,7 +280,7 @@ BarTouchData get barTouchData => BarTouchData(
 );
 
 Widget getTitles(double value, TitleMeta meta) {
-  final style = TextStyle(
+  const style = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
     fontSize: 10,
@@ -288,7 +319,7 @@ Widget getTitles(double value, TitleMeta meta) {
   );
 }
 
-FlTitlesData get titlesData => FlTitlesData(
+FlTitlesData get titlesData => const FlTitlesData(
   show: true,
   bottomTitles: AxisTitles(
     sideTitles: SideTitles(
@@ -297,16 +328,16 @@ FlTitlesData get titlesData => FlTitlesData(
       getTitlesWidget: getTitles,
     ),
   ),
-  leftTitles: const AxisTitles(
+  leftTitles: AxisTitles(
     sideTitles: SideTitles(
         showTitles: true,
         reservedSize: 35
     ),
   ),
-  topTitles: const AxisTitles(
+  topTitles: AxisTitles(
     sideTitles: SideTitles(showTitles: false),
   ),
-  rightTitles: const AxisTitles(
+  rightTitles: AxisTitles(
     sideTitles: SideTitles(showTitles: false),
   ),
 );
@@ -317,7 +348,7 @@ FlBorderData get borderData => FlBorderData(
 );
 
 //차트 그라데이션
-LinearGradient get _barsGradient => LinearGradient(
+LinearGradient get _barsGradient => const LinearGradient(
   colors: [
     Colors.purple,
     Colors.cyan

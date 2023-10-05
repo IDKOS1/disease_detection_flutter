@@ -228,7 +228,7 @@ class _CameraPageState extends State<CameraPage> {
                                 );
                               },
                               child: Container(
-                                child: Row(
+                                child: const Row(
                                   children: [
                                     Text('촬영예시',
                                       style: TextStyle(
@@ -241,7 +241,7 @@ class _CameraPageState extends State<CameraPage> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 20,),
+                            const SizedBox(width: 20,),
                           ],
                         ),
                       const SizedBox(height: 10),
@@ -352,12 +352,12 @@ class _CameraPageState extends State<CameraPage> {
                                                       context: context,
                                                       builder: (BuildContext context) {
                                                         return AlertDialog(
-                                                          title: Text(
+                                                          title: const Text(
                                                               '미촬영된 이미지가 있습니다.',
                                                           style: TextStyle(
                                                             fontSize: 20,
                                                           ),),
-                                                          content: Text(
+                                                          content: const Text(
                                                               '정말 업로드 하시겠습니까?'),
                                                           actions: [
                                                             TextButton(

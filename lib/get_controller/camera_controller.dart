@@ -83,7 +83,7 @@ class CameraPageController extends GetxController {
   Future imageUpload () async {
     showSpinner.value = true;
     // 각 이미지별 처리하는 코드
-    for (int i = 1; i <= imageData.length; i++) {
+    for (int i = 1; i < imageData.length; i++) {
       if (imageData[i].imgPath != null) {
         await GallerySaver.saveImage(imageData[i].imgPath!.path)
             .then((value) => print('save value = $value'))
