@@ -15,7 +15,7 @@ class UrlController extends GetxController {
 
   Future<void> registerUser(String email, String password, String username, String birth, String gender, String number, String farm) async {
     print(url.resolve('/register/signup/'));
-d    try {
+    try {
       final response = await http.post(
           url.resolve('/register/signup/'),
           headers: <String, String>{
@@ -116,5 +116,6 @@ d    try {
       print('토큰 없음');
       return false;
     }
-  }}
+  }
+}
 

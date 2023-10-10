@@ -290,18 +290,7 @@ class _CameraPageState extends State<CameraPage> {
                           ElevatedButton(
                             child: const Text("이미지 저장"),
                             onPressed: () async {
-                            for (Images item in controller.imageData) {
-                              if (item.imgPath != null) {
-                                await GallerySaver.saveImage(item.imgPath!.path)
-                                    .then((value) => print('save value = $value'))
-                                    .catchError((err) {
-                                  print('error : ($err');
-                                });
-                              } else {
-                                //toastmsg('선택 이미지 없음');
-                              }
-                            }
-                            Fluttertoast.showToast(msg: "저장 되었습니다.");
+                            controller.imageSave();
                           },
                           ),
 

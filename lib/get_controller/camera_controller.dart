@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:untitled/class/class.dart';
 import 'package:untitled/layout/toast_message.dart';
+import 'package:http/http.dart' as http;
 
 class CameraPageController extends GetxController {
   static CameraPageController get to => Get.find();
@@ -82,22 +84,53 @@ class CameraPageController extends GetxController {
   //촬영 이미지를 서버로 전송하는 코드
   Future imageUpload () async {
     showSpinner.value = true;
+
+    final box = GetStorage();
+
+    final url = Uri.parse('http://10.0.2.2:8000/register/uploadImage/');
+    final request = http.MultipartRequest('POST', url);
+    print("token = ${box.read('token')}");
+    request.headers['Authorization'] = 'Token ${box.read('token')}';
+
     // 각 이미지별 처리하는 코드
-    for (int i = 1; i < imageData.length; i++) {
+    for (int i = 0; i < imageData.length; i++) {
       if (imageData[i].imgPath != null) {
         await GallerySaver.saveImage(imageData[i].imgPath!.path)
             .then((value) => print('save value = $value'))
             .catchError((e) {
           print('error : ($e)');
         });
-      } else {
-        //
+        final file = File(imageData[i].imgPath!.path);
+
+        // 파일 필드 추가
+        request.files.add(
+          await http.MultipartFile.fromPath('image_$i', file.path),
+        );
       }
-      imageData[i].imgPath = null;
+      //imageData[i].imgPath = null;
     }
 
+    // 서버에 요청 보내고 응답 받기
+    try {
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        // 업로드 성공
+        print('Upload successful');
+        // showSpinner.value = false;
+        toastmsg('업로드 완료');
+      } else {
+        // 업로드 실패
+        print('Upload failed with status ${response.statusCode}');
+        // showSpinner.value = false;
+        toastmsg('업로드 실패');
+      }
+    } catch (e) {
+      // 오류 처리
+      print('Error uploading: $e');
+      // showSpinner.value = false;
+      toastmsg('오류 발생');
+    }
     showSpinner.value = false;
-    toastmsg('업로드 완료');
   }
 
 
@@ -108,5 +141,21 @@ class CameraPageController extends GetxController {
     print('current index = ${index}');
     print('index.value = ${currentIndex.value}');
     print('name.value= ${currentName.value}');
+  }
+
+
+  Future imageSave() async {
+    for (Images item in imageData) {
+      if (item.imgPath != null) {
+        await GallerySaver.saveImage(item.imgPath!.path)
+            .then((value) => print('save value = $value'))
+            .catchError((err) {
+          print('error : ($err');
+        });
+      } else {
+        //toastmsg('선택 이미지 없음');
+      }
+    }
+    Fluttertoast.showToast(msg: "저장 되었습니다.");
   }
 }
