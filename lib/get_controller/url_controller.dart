@@ -13,7 +13,8 @@ class UrlController extends GetxController {
 
   RxBool showSpinner = false.obs;
 
-  Future<void> registerUser(String email, String password, String username, String birth, String gender, String number, String farm) async {
+  Future<void> registerUser(String email, String password, String username,
+      String birth, String gender, String number, String farm) async {
     print(url.resolve('/register/signup/'));
     try {
       final response = await http.post(
@@ -37,28 +38,28 @@ class UrlController extends GetxController {
         Fluttertoast.showToast(msg: '회원가입이 완료 되었습니다.');
         print("token${json.decode(response.body)["Token"]}");
         Get.back();
-      } else if (response.statusCode == 400){
+      } else if (response.statusCode == 400) {
         Fluttertoast.showToast(msg: '${response.body}');
       } else {
         Fluttertoast.showToast(msg: '[${response.statusCode}] 에러 발생.');
       }
-      } catch (e) {
-        print("서버에 접근할 수 없음: $e");
-        Fluttertoast.showToast(msg: '서버에 접근할 수 없습니다.');
-      }
+    } catch (e) {
+      print("서버에 접근할 수 없음: $e");
+      Fluttertoast.showToast(msg: '서버에 접근할 수 없습니다.');
     }
+  }
 
-  Future<void> tryLogin (String email, String password) async {
+  Future<void> tryLogin(String email, String password) async {
     final box = GetStorage();
     print(url.resolve('/register/login/'));
     showSpinner.value = true;
-    try{
+    try {
       final response = await http.post(
           url.resolve('/register/login/'),
-          headers: <String, String> {
+          headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8'
           },
-          body: jsonEncode(<String, String> {
+          body: jsonEncode(<String, String>{
             'email': email,
             'password': password,
           })
@@ -98,14 +99,16 @@ class UrlController extends GetxController {
             'Authorization': 'Token $token',
           },
         ).timeout(const Duration(seconds: 20));
+        final responseData = json.decode(response.body);
 
-        print("응답코드: ${response.statusCode}");
+        print("응답코드: ${responseData["message"]}");
+        String respons = responseData["message"];
 
         if (response.statusCode == 200) {
-          Fluttertoast.showToast(msg: '${response.body}');
+          Fluttertoast.showToast(msg: respons);
           return true;
         } else {
-          Fluttertoast.showToast(msg: '${response.body}');
+          Fluttertoast.showToast(msg: respons);
           return false;
         }
       } catch (e) {
@@ -115,6 +118,31 @@ class UrlController extends GetxController {
     } else {
       print('토큰 없음');
       return false;
+    }
+  }
+
+  Future<dynamic> fetchDataFromApi() async {
+    final response = await http.post(
+      Uri.parse('YOUR_API_ENDPOINT_HERE'), // 여기에 Django API의 엔드포인트 URL을 입력하세요.
+      // 필요한 헤더를 추가하세요.
+    );
+    final box = GetStorage();
+
+    if (response.statusCode == 200) {
+      final response = await http.post(
+        url.resolve('/register/loadResult/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Token ${box.read('token')}'
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return List<Map<String, dynamic>>.from(data);
+      } else {
+        return;
+      }
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:untitled/get_controller/willPop_controller.dart';
+import 'package:untitled/screen/disease/disease_list.dart';
 import 'package:untitled/screen/result/result.dart';
 import 'package:untitled/screen/setting_page.dart';
 
@@ -28,6 +29,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
     _pages = [
       CameraPage(),
       ResultPage(),
+      DiseasePage(),
       SettingPage()
     ];
   }
@@ -51,6 +53,10 @@ class _NavigatorPageState extends State<NavigatorPage> {
                 BottomNavigationBarItem(
                     icon: Icon(Icons.upload),
                     label: '결과 확인'
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.menu_book),
+                    label: '질병 정보'
                 ),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.person),

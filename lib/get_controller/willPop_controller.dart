@@ -1,4 +1,3 @@
-// 현재 시간
 import 'dart:io';
 
 import 'package:fluttertoast/fluttertoast.dart';

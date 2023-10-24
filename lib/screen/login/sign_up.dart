@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -15,8 +16,8 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
   List<String> farmList = ['1번 양식장', '2번 양식장', '3번 양식장', '4번 양식장'];
-  String selectedFarm ='1번 양식장';
   List<bool> _selections1 = List.generate(2, (index) => false);
+  String selectedFarm = '1번 양식장';
 
   final _formKey = GlobalKey<FormState>();
 
@@ -26,7 +27,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _gender = TextEditingController();
   final TextEditingController _number = TextEditingController();
-  final TextEditingController _farm = TextEditingController();
+
 
   DateTime date = DateTime.now();
 
@@ -45,7 +46,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
             child: Stack(
               children: [
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       image: DecorationImage(
                           image: AssetImage('imgs/background1.png'),
                           fit: BoxFit.fill
@@ -86,11 +87,11 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                             toggleButton('남', '여'),
                             component1(Icons.phone_android,
                                 '전화번호', false, false, 6, _number),
-                            farmDropdown(Icons.house_siding, '소속 양식장'),
+                            farmDropdown(Icons.house_siding),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text('계정이 있으신가요?',
+                                const Text('계정이 있으신가요?',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 12
@@ -99,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                     onPressed: () {
                                       Get.back();
                                     },
-                                    child: Text('로그인 하러 가기',
+                                    child: const Text('로그인 하러 가기',
                                       style: TextStyle(
                                           fontSize: 12
                                       ),))
@@ -158,7 +159,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                               String birth = '${date.year}-${date.month}-${date.day}';
 
                               await controller.registerUser(_email.text, _password.text, _name.text,
-                                  birth, _gender.text, _number.text, _farm.text);
+                                  birth, _gender.text, _number.text, selectedFarm);
 
                               controller.showSpinner.value = false;
                             },
@@ -194,10 +195,6 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(8),
           ),
           child: ToggleButtons(
-            children: [
-              Text(one),
-              Text(two),
-            ],
             constraints: BoxConstraints.expand(
                 height: size.width / 13,
                 width: size.width / 1.2 / 2
@@ -227,6 +224,10 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
               });
             },
             isSelected: _selections1,
+            children: [
+              Text(one),
+              Text(two),
+            ],
           ),
         ),
       ),
@@ -234,9 +235,9 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
   }
 
 
-  Widget farmDropdown(IconData icon, String hintText) {
+  Widget farmDropdown(IconData icon) {
     Size size = MediaQuery.of(context).size;
-    _farm.text = '1번 양식장';
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
       child: BackdropFilter(
@@ -254,10 +255,11 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(15),
           ),
           child: DropdownButton<String>(
-            value: _farm.text,
+            value: selectedFarm,
             onChanged: (String? value) {
               setState(() {
-                _farm.text = value!;
+                selectedFarm = value!;
+                print('farm: $selectedFarm');
               });
             },
             items: farmList.map((value) {
@@ -265,9 +267,9 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                 value: value,
                 child: Row(
                   children: [
-                    SizedBox(width: 13),
+                    const SizedBox(width: 13),
                     Icon(icon, color: Colors.white.withOpacity(.7)),
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     Text(value,
                       style: TextStyle(color: Colors.white.withOpacity(.8)),
                     ),
@@ -277,12 +279,9 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
             }).toList(),
             style: TextStyle(color: Colors.black.withOpacity(.8)),
             dropdownColor: Colors.grey, // 추가: 드롭다운 배경색 변경
-            underline: SizedBox(), // 추가: 드롭다운 하단의 밑줄 제거
+            underline: const SizedBox(), // 추가: 드롭다운 하단의 밑줄 제거
             isExpanded: true, // 추가: 드롭다운 확장 여부 설정
-            hint: Text( // 추가: 드롭다운 선택 이전에 보여질 힌트 텍스트
-              '소속 양식장을 선택 하세요.',
-              style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(.5)),
-            ),
+
           ),
         ),
       ),
@@ -355,25 +354,26 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
           ),
           child: Row(
             children: [
-              SizedBox(width: 10,),
+              const SizedBox(width: 10),
               Icon(icon,
                   color: Colors.white.withOpacity(.7)),
-              SizedBox(width: 10,),
+              const SizedBox(width: 10),
               Text('생년월일',
                   style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(.5))),
-              SizedBox(width: 40,),
+              const SizedBox(width: 40,),
               ElevatedButton(
-                child: Text(
-                    "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}"
-                ),
                 onPressed: () async {
-                  final selectedDate = await showDatePicker(
-                    context: context,
+                  final selectedDate = await DatePicker.showSimpleDatePicker(
+                    context,
                     initialDate: date,
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                    initialEntryMode: DatePickerEntryMode.calendarOnly,
-                    locale: const Locale('ko', ''),
+                    firstDate: DateTime(2020),
+                    lastDate: date,
+                    dateFormat: "yyyy-MM-dd",
+                    locale: DateTimePickerLocale.en_us,
+                    looping: true,
+                    confirmText: '확인',
+                    cancelText: '취소',
+                    titleText: '',
                   );
                   if (selectedDate != null) {
                     setState(() {
@@ -382,9 +382,14 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withOpacity(.1),
+                    backgroundColor: Colors.transparent,
                     foregroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
+                    shadowColor: Colors.transparent,
+                    surfaceTintColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                ),
+                child: Text(
+                    "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}"
                 ),
               ),
             ],
@@ -430,4 +435,9 @@ class MyBehavior extends ScrollBehavior {
       BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
   }
+}
+
+class SiguUpController extends GetxController {
+  static SiguUpController get to => Get.find();
+
 }

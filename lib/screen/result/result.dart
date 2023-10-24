@@ -86,10 +86,9 @@ class ResultPage extends StatelessWidget {
       );
     } else{
       // results가 null인 경우에 대한 처리
-      return const CircularProgressIndicator(); // 또는 다른 대체 화면을 표시할 수 있음
+      return const CircularProgressIndicator();
     }
   }
-
 }
 
 class Result extends StatelessWidget {
@@ -193,7 +192,6 @@ class Detail extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: CustomScrollView(
           physics: const ClampingScrollPhysics(),
           slivers: <Widget>[

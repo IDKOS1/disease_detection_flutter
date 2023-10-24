@@ -195,7 +195,6 @@ class _CameraPageState extends State<CameraPage> {
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     final size = MediaQuery.of(context).size;
 
-
     return ScaffoldMessenger(
       child: SafeArea(
         child: Scaffold(
@@ -337,6 +336,12 @@ class _CameraPageState extends State<CameraPage> {
                                                   // 누락된 이미지가 있는지 확인하는 코드
                                                   if (controller.imageData.any((image) => image.imgPath == null)) {
                                                     print("미촬영된 이미지");
+                                                    if (!controller.imageData.any((image) => image.imgPath != null)) {
+                                                      // 모든 이미지의 imgPath 값이 null인 경우
+                                                      print("전체 이미지 없음");
+                                                      Fluttertoast.showToast(msg: '최소 1장의 이미지를 촬영 해주세요.');
+                                                      return;
+                                                    }
                                                     showDialog(
                                                       context: context,
                                                       builder: (BuildContext context) {

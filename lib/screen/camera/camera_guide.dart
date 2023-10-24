@@ -99,6 +99,7 @@ class _cameraGuideState extends State<cameraGuide> {
               child: const Text('닫기'),
             ),
           ],
+          backgroundColor: Colors.white,
         );
       },
       onPageChanged: (index) {
