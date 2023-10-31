@@ -76,6 +76,13 @@ flutter:
   assets:
     - imgs/
     - imgs/guide_images/
+    - imgs/disease_images/Edward/
+    - imgs/disease_images/Enteromyxum/
+    - imgs/disease_images/Miamiensis/
+    - imgs/disease_images/Streptococcus/
+    - imgs/disease_images/Tenacibaculum/
+    - imgs/disease_images/VHSV/
+    - imgs/disease_images/Vibrio/image_00.PNG
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
