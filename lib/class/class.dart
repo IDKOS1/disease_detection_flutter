@@ -26,3 +26,15 @@ class Guide{
 
   Guide(this.name, this.imgPath);
 }
+
+class Disease{
+  late final String krName;
+  late final String enName;
+  late final List<String> imgPath;
+  late final String infectionSrc;
+  late final String symptom;
+  late final String period;
+  late final String description;
+
+  Disease(this.krName, this.enName, this.imgPath, this.infectionSrc, this.symptom, this.period, this.description);
+}
