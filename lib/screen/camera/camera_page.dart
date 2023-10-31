@@ -21,7 +21,6 @@ class CameraPage extends StatefulWidget {
 class _CameraPageState extends State<CameraPage> {
 
   var controller = CameraPageController();
-  final PageController pageController = PageController();
 
   //이미지를 보여주는 위젯
   Widget showImage() {
@@ -33,7 +32,7 @@ class _CameraPageState extends State<CameraPage> {
           height: heightSize /2.3,
           child: PageView.builder(
             scrollDirection: Axis.horizontal,
-            controller: pageController,
+            controller: controller.pageController,
             itemCount: controller.imageData.length,
             itemBuilder: (context, index) {
               final images = controller.imageData[index];
@@ -64,7 +63,7 @@ class _CameraPageState extends State<CameraPage> {
             },
             onPageChanged: (index) {
                 print(index);
-                controller.pageChanged(index);
+                controller.SlidepageChanged(index);
             },
 
           ),
@@ -89,12 +88,12 @@ class _CameraPageState extends State<CameraPage> {
         children: [
           InkWell(
             onTap: () {
-              controller.currentName.value = images.name;
+              //controller.currentName.value = images.name;
               final index = controller.imageData.indexWhere((item) =>
               item.name == images.name);
-              pageController.animateToPage(
+              controller.pageController.animateToPage(
                 index,
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
               );
               print("_list의 index: $index");
@@ -194,12 +193,12 @@ class _CameraPageState extends State<CameraPage> {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     final size = MediaQuery.of(context).size;
-
+    print('촬영 페이지 진입 ${controller.currentIndex}');
     return ScaffoldMessenger(
-      child: SafeArea(
-        child: Scaffold(
-            backgroundColor: const Color(0xfff4f3f9),
-            body: Column(
+      child: Scaffold(
+          backgroundColor: const Color(0xfff4f3f9),
+          body: SafeArea(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 15,),
@@ -404,8 +403,8 @@ class _CameraPageState extends State<CameraPage> {
                   ),
                 )
               ],
-            )),
-      ),
+            ),
+          )),
     );
   }
 }

@@ -3,25 +3,16 @@ import 'package:get/get.dart';
 import 'package:untitled/class/class.dart';
 import 'package:untitled/get_controller/camera_controller.dart';
 
-class cameraGuide extends StatefulWidget {
+class cameraGuide extends StatelessWidget {
   final CameraPageController controller;
   const cameraGuide({
     required this. controller,
     Key? key}) : super(key: key);
 
   @override
-  State<cameraGuide> createState() => _cameraGuideState();
-}
-
-class _cameraGuideState extends State<cameraGuide> {
-
-  @override
   Widget build(BuildContext context) {
-    final controller = widget.controller;
     late String guideTitle, guideText;
     PageController pageController = PageController(initialPage: controller.currentIndex.value);
-
-
 
 
     return Obx(() => PageView.builder(
@@ -53,48 +44,50 @@ class _cameraGuideState extends State<cameraGuide> {
               ],
             ),
           ),
-          content: Column(
-            children: [
-              Center(
-                child: Column(
-                  children: [
-                    Text('각도 예시',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      Text('각도 예시',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold
+                        ),
                       ),
-                    ),
-                    Image.asset('imgs/guide_images/Guide00.png'),
-                    SizedBox(height: 10),
-                    Text('촬영 예시',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold
-                      ),),
-                    Image.asset(controller.guideList[index].imgPath),
-                    SizedBox(height: 40),
-                    Text(guideTitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
+                      Image.asset('imgs/guide_images/Guide00.png'),
+                      SizedBox(height: 10),
+                      Text('촬영 예시',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold
+                        ),),
+                      Image.asset(controller.guideList[index].imgPath),
+                      SizedBox(height: 40),
+                      Text(guideTitle,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold
+                        ),),
+                      SizedBox(height: 10),
+                      Text(guideText,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.bold
-                      ),),
-                    SizedBox(height: 10),
-                    Text(guideText,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),)
-                  ],
+                        ),)
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 15,),
-              Text('')
-            ],
+                SizedBox(height: 15,),
+                Text('')
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 // 다이얼로그 닫기
-                Navigator.of(context).pop();
+                Get.back();
               },
               child: const Text('닫기'),
             ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,7 @@ class CameraPageController extends GetxController {
   static CameraPageController get to => Get.find();
   RxInt currentIndex = 0.obs;
   RxBool showSpinner = false.obs;
+  final PageController pageController = PageController(keepPage: true);
 
   static List<String> imgName = [
     '유안측 0도',
@@ -137,6 +139,16 @@ class CameraPageController extends GetxController {
   void pageChanged(int index)  {
     currentName.value = imageData[index].name;
     currentIndex.value = index;
+    pageController.jumpToPage(index);
+    print('current index = ${index}');
+    print('index.value = ${currentIndex.value}');
+    print('name.value= ${currentName.value}');
+  }
+
+  void SlidepageChanged(int index)  {
+    currentName.value = imageData[index].name;
+    currentIndex.value = index;
+
     print('current index = ${index}');
     print('index.value = ${currentIndex.value}');
     print('name.value= ${currentName.value}');
