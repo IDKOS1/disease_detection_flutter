@@ -40,137 +40,139 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
       inAsyncCall: controller.showSpinner.value,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: SizedBox(
-            height: size.height,
-            child: Stack(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('imgs/background1.png'),
-                          fit: BoxFit.fill
-                      )
-                  ),),
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: size.height * .1),
-                      child: Text(
-                        '계정 만들기',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(.7),
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          wordSpacing: 4,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: SizedBox(
+              height: size.height,
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage('imgs/background1.png'),
+                            fit: BoxFit.fill
+                        )
+                    ),),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: size.height * .1),
+                        child: Text(
+                          '계정 만들기',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(.7),
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                            wordSpacing: 4,
+                          ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 20,
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            component1(Icons.mail,
-                                '이메일', false, true, 1, _email),
-                            component1(Icons.lock_outline,
-                                '비밀번호', true, false, 2, _password),
-                            component1(Icons.lock_outline,
-                                '비밀번호 확인', true, false, 3, _passwordCheck),
-                            component1(Icons.person,
-                                '이름', false, false, 4, _name),
-                            birthSelect(Icons.calendar_today,
-                                '생년월일', false, false),
-                            toggleButton('남', '여'),
-                            component1(Icons.phone_android,
-                                '전화번호', false, false, 6, _number),
-                            farmDropdown(Icons.house_siding),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                const Text('계정이 있으신가요?',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12
-                                    )),
-                                TextButton(
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    child: const Text('로그인 하러 가기',
+                      Expanded(
+                        flex: 20,
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              component1(Icons.mail,
+                                  '이메일', false, true, 1, _email),
+                              component1(Icons.lock_outline,
+                                  '비밀번호', true, false, 2, _password),
+                              component1(Icons.lock_outline,
+                                  '비밀번호 확인', true, false, 3, _passwordCheck),
+                              component1(Icons.person,
+                                  '이름', false, false, 4, _name),
+                              birthSelect(Icons.calendar_today,
+                                  '생년월일', false, false),
+                              toggleButton('남', '여'),
+                              component1(Icons.phone_android,
+                                  '전화번호', false, false, 6, _number),
+                              farmDropdown(Icons.house_siding),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  const Text('계정이 있으신가요?',
                                       style: TextStyle(
+                                          color: Colors.white,
                                           fontSize: 12
-                                      ),))
-                              ],
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      child: const Text('로그인 하러 가기',
+                                        style: TextStyle(
+                                            fontSize: 12
+                                        ),))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 6,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            component2(
+                              '계정 생성', 2,
+                                  () async {
+                                controller.showSpinner.value = true;
+                                if(_email.text.isEmpty || !_email.text.contains('@')) {
+                                  Fluttertoast.showToast(msg: '이메일을 확인해 주세요.');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                } else if (_password.text.isEmpty){
+                                  Fluttertoast.showToast(msg: '비밀번호를 확인해 주세요.');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                }  else if (_passwordCheck.text.isEmpty){
+                                  Fluttertoast.showToast(msg: '비밀번호 확인을 입력 해주세요');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                } else if (_password.text != _passwordCheck.text){
+                                  Fluttertoast.showToast(msg: '비밀번호와 비밀번호 확인이 다릅니다.');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                } else if (_password.text.length < 8){
+                                  Fluttertoast.showToast(msg: '비밀번호를 8자리 이상 입력해 주세요.');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                } else if (_name.text.isEmpty) {
+                                  Fluttertoast.showToast(msg: '이름을 확인해 주세요.');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                } else if (!(_selections1[0] || _selections1[1])) {
+                                  Fluttertoast.showToast(msg: '성별을 선택해 주세요.');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                } else if (_number.text.isEmpty) {
+                                  Fluttertoast.showToast(msg: '번호를 확인해 주세요.');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                } else if (!_number.text.isNum) {
+                                  Fluttertoast.showToast(msg: '전화번호는 숫자만 입력해 주세요.');
+                                  controller.showSpinner.value = false;
+                                  return;
+                                }
+                                String birth = '${date.year}-${date.month}-${date.day}';
+
+                                await controller.registerUser(_email.text, _password.text, _name.text,
+                                    birth, _gender.text, _number.text, selectedFarm);
+
+                                controller.showSpinner.value = false;
+                              },
                             ),
+                            SizedBox(height: size.height * .05),
                           ],
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 6,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          component2(
-                            '계정 생성', 2,
-                                () async {
-                              controller.showSpinner.value = true;
-                              if(_email.text.isEmpty || !_email.text.contains('@')) {
-                                Fluttertoast.showToast(msg: '이메일을 확인해 주세요.');
-                                controller.showSpinner.value = false;
-                                return;
-                              } else if (_password.text.isEmpty){
-                                Fluttertoast.showToast(msg: '비밀번호를 확인해 주세요.');
-                                controller.showSpinner.value = false;
-                                return;
-                              }  else if (_passwordCheck.text.isEmpty){
-                                Fluttertoast.showToast(msg: '비밀번호 확인을 입력 해주세요');
-                                controller.showSpinner.value = false;
-                                return;
-                              } else if (_password.text != _passwordCheck.text){
-                                Fluttertoast.showToast(msg: '비밀번호와 비밀번호 확인이 다릅니다.');
-                                controller.showSpinner.value = false;
-                                return;
-                              } else if (_password.text.length < 8){
-                                Fluttertoast.showToast(msg: '비밀번호를 8자리 이상 입력해 주세요.');
-                                controller.showSpinner.value = false;
-                                return;
-                              } else if (_name.text.isEmpty) {
-                                Fluttertoast.showToast(msg: '이름을 확인해 주세요.');
-                                controller.showSpinner.value = false;
-                                return;
-                              } else if (!(_selections1[0] || _selections1[1])) {
-                                Fluttertoast.showToast(msg: '성별을 선택해 주세요.');
-                                controller.showSpinner.value = false;
-                                return;
-                              } else if (_number.text.isEmpty) {
-                                Fluttertoast.showToast(msg: '번호를 확인해 주세요.');
-                                controller.showSpinner.value = false;
-                                return;
-                              } else if (!_number.text.isNum) {
-                                Fluttertoast.showToast(msg: '전화번호는 숫자만 입력해 주세요.');
-                                controller.showSpinner.value = false;
-                                return;
-                              }
-                              String birth = '${date.year}-${date.month}-${date.day}';
-
-                              await controller.registerUser(_email.text, _password.text, _name.text,
-                                  birth, _gender.text, _number.text, selectedFarm);
-
-                              controller.showSpinner.value = false;
-                            },
-                          ),
-                          SizedBox(height: size.height * .05),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -366,7 +368,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                   final selectedDate = await DatePicker.showSimpleDatePicker(
                     context,
                     initialDate: date,
-                    firstDate: DateTime(2020),
+                    firstDate: DateTime(1900),
                     lastDate: date,
                     dateFormat: "yyyy-MM-dd",
                     locale: DateTimePickerLocale.en_us,

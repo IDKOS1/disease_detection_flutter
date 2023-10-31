@@ -36,101 +36,103 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         inAsyncCall: controller.showSpinner.value,
         child: Scaffold(
             backgroundColor: Colors.transparent,
-            body: ScrollConfiguration(
-              behavior: MyBehavior(),
-              child: SingleChildScrollView(
-                child: SizedBox(
-                  height: size.height,
-                  child: Stack(
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage('imgs/background1.png'),
-                                fit: BoxFit.fill
-                            )
-                        ),),
-                      Column(
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: Padding(
-                              padding: EdgeInsets.only(top: size.height * .1),
-                              child: Text(
-                                'APP NAME',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(.7),
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                  wordSpacing: 4,
+            body: SafeArea(
+              child: ScrollConfiguration(
+                behavior: MyBehavior(),
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    height: size.height,
+                    child: Stack(
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage('imgs/background1.png'),
+                                  fit: BoxFit.fill
+                              )
+                          ),),
+                        Column(
+                          children: [
+                            Expanded(
+                              flex: 5,
+                              child: Padding(
+                                padding: EdgeInsets.only(top: size.height * .1),
+                                child: Text(
+                                  '수산질병 판독 시스템',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(.7),
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                    wordSpacing: 4,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 7,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                component1(
-                                    Icons.email, '이메일', false, true, _email),
-                                component1(
-                                    Icons.lock_outline, '비밀번호', true, false, _password),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    component2(
-                                      '로그인',
-                                      2.58,
-                                          () async {
-                                            controller.showSpinner.value = true;
-                                            if(_email.text.isEmpty || !_email.text.contains('@')) {
-                                              Fluttertoast.showToast(msg: '이메일을 확인해 주세요.');
-                                              controller.showSpinner.value = false;
-                                              return;
-                                            } else if (_password.text.isEmpty){
-                                              Fluttertoast.showToast(msg: '비밀번호를 입력해 주세요.');
-                                              controller.showSpinner.value = false;
-                                              return;
-                                            }
-                                            await controller.tryLogin(_email.text, _password.text);
-                                      },
-                                    ),
-                                    SizedBox(width: size.width / 20),
-                                    component2(
-                                      '회원 찾기',
-                                      2.58,
-                                          () async {
-                                        print(box.read('token'));
-                                        Fluttertoast.showToast(msg: '${box.read('token')}');
-                                        Get.offAll(() => NavigatorPage());
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
+                            Expanded(
+                              flex: 7,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  component1(
+                                      Icons.email, '이메일', false, true, _email),
+                                  component1(
+                                      Icons.lock_outline, '비밀번호', true, false, _password),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      component2(
+                                        '로그인',
+                                        2.58,
+                                            () async {
+                                              controller.showSpinner.value = true;
+                                              if(_email.text.isEmpty || !_email.text.contains('@')) {
+                                                Fluttertoast.showToast(msg: '이메일을 확인해 주세요.');
+                                                controller.showSpinner.value = false;
+                                                return;
+                                              } else if (_password.text.isEmpty){
+                                                Fluttertoast.showToast(msg: '비밀번호를 입력해 주세요.');
+                                                controller.showSpinner.value = false;
+                                                return;
+                                              }
+                                              await controller.tryLogin(_email.text, _password.text);
+                                        },
+                                      ),
+                                      SizedBox(width: size.width / 20),
+                                      component2(
+                                        '회원 찾기',
+                                        2.58,
+                                            () async {
+                                          print(box.read('token'));
+                                          Fluttertoast.showToast(msg: '로그인 되었습니다.');
+                                          Get.offAll(() => NavigatorPage());
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 6,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                component2(
-                                  '회원가입',
-                                  2,
-                                      () {
-                                    Get.to(()=>SignUpPage());
-                                  },
-                                ),
-                                SizedBox(height: size.height * .05),
-                              ],
+                            Expanded(
+                              flex: 6,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  component2(
+                                    '회원가입',
+                                    2,
+                                        () {
+                                      Get.to(()=>SignUpPage());
+                                    },
+                                  ),
+                                  SizedBox(height: size.height * .05),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

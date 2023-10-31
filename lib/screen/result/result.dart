@@ -190,9 +190,9 @@ class Detail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        body: CustomScrollView(
+    return Scaffold(
+      body: SafeArea(
+        child: CustomScrollView(
           physics: const ClampingScrollPhysics(),
           slivers: <Widget>[
             const SliverAppBar(
