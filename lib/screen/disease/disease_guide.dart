@@ -57,15 +57,19 @@ class DiseaseGuide extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Image.asset(imgPath[0], width: size.width / 2.4),
-                          Column(
-                            children: [
-                              Text(krName,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25
-                                  )),
-                              Text(enName)
-                            ],)
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(krName,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 23
+                                    ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(enName)
+                              ],),
+                          )
                         ],
                       ),
                     ),
