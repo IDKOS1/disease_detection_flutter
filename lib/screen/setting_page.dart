@@ -20,61 +20,93 @@ class _SettingPageState extends State<SettingPage> {
   final TextEditingController _name = TextEditingController();
 
 
+
   @override
   Widget build(BuildContext context) {
     final box = GetStorage();
-    return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
+    String name = box.read('name') ?? '이름 정보 없음';
+    String email = box.read('email') ?? '이메일 정보 없음';
+    String farm = box.read('farm') ?? '농장 정보 없음';
+
+    return Scaffold(
+      body: SafeArea(
+        child: CustomScrollView(
+          shrinkWrap: true,
+          physics: AlwaysScrollableScrollPhysics(),
+          slivers: [
+            const SliverAppBar(
+              toolbarHeight: 60,
+              backgroundColor: Colors.blue,
+              floating: true,
+              pinned: false,
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(15),
+                      bottomLeft: Radius.circular(15)
+                  )
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text('설정'),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.grey,
-                      child: Icon(Icons.person, size: 50,),
-                    ),
-                  ),
-                  SizedBox(width: 50,),
-                  Column(
-                    children: [
-                      Text('김철수',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
-                        ),
-                      ),
-                      Text('소속 양식장')
-                    ],
-                  ),
+                  infoWidget('이름', name),
+                  infoWidget('이메일', email),
+                  infoWidget('양식장', farm),
+                  ElevatedButton(
+                      onPressed: () async {
+                        box.remove('token');
+                        print('token: ${box.read('toekn')}');
+                        Get.offAll(() => LoginPage());
+                      },
+                      child: Text('Log out')),
+                  ElevatedButton(
+                      onPressed: () async {
+                        bool isTrue = await controller.checkToken();
+                        print('bool = ${isTrue}');
+                        toastmsg('${box.read('token')}');
+                      },
+                      child: Text('Check Token')),
+                  ElevatedButton(
+                      onPressed: () async {
+                        await controller.loadResult();
+                      },
+                      child: Text('length result'))
                 ],
               ),
-              ElevatedButton(
-                  onPressed: () async {
-                    box.remove('token');
-                    print('token: ${box.read('toekn')}');
-                    Get.offAll(() => LoginPage());
-                  },
-                  child: Text('Log out')),
-              ElevatedButton(
-                  onPressed: () async {
-                    final boxToken = box.read('token');
-                    print('box token: $boxToken');
-                    bool isTrue = await controller.checkToken(boxToken);
-                    print('bool = ${isTrue}');
-                    toastmsg('${box.read('token')}');
-                  },
-                  child: Text('Check Token'))
-            ],
-          ),
-        )
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget infoWidget(String title, String content) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 23
+              ),
+            ),
+            Text(content,
+              style: const TextStyle(
+                  fontSize: 16
+              ),),
+          ],
+        ),
+      ),
     );
   }
 

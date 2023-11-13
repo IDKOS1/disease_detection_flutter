@@ -5,89 +5,102 @@ import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart
 import 'package:untitled/class/class.dart';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:untitled/get_controller/url_controller.dart';
 
 
-class ResultPage extends StatelessWidget {
+class ResultPage extends StatefulWidget {
   const ResultPage({super.key});
 
   @override
+  State<ResultPage> createState() => _ResultPageState();
+}
+
+class _ResultPageState extends State<ResultPage> {
+  @override
   Widget build(BuildContext context) {
-    List<Results> results = [];
-    List<String> diseaseName = ['확인중','에드워드병', '비브리오병', '연쇄구균병', '활주세균병',
-      '여윔증', '스쿠티카병', 'VHSV'];
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {
+          fetchData();
+        });
+      },
+      child: FutureBuilder<List<Results>?>(
+        future: fetchData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('데이터를 가져오는 동안 오류가 발생했습니다.'),
+            );
+          } else if (snapshot.hasData) {
+            final data = snapshot.data;
+            if (data != null && data.isNotEmpty) {
+              data.sort((a, b) => b.uploadDate.compareTo(a.uploadDate));
+              return SafeArea(
+                  child: Scaffold(
+                    backgroundColor: Colors.white,
+                    body: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: <Widget>[
+                        const SliverAppBar(
+                          toolbarHeight: 60,
+                          backgroundColor: Colors.blueAccent,
+                          floating: true,
+                          pinned: false,
+                          // 스크롤을 아래로 내릴 때 AppBar를 고정
+                          shape: ContinuousRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15)
+                              )
+                          ),
+                          flexibleSpace: FlexibleSpaceBar(
+                            centerTitle: true,
+                            title: Text('결과 확인'),
+                          ),
+                        ),
+                        SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                    (BuildContext context, index) {
+                                  data!.sort((a, b) =>
+                                      b.uploadDate.compareTo(a.uploadDate));
+                                  return Column(
+                                    children: [
+                                      Result(ResultData: data![index]),
+                                      Divider(
+                                          color: Colors.grey.withOpacity(0.3)),
+                                    ],
+                                  );
+                                },
+                                childCount: data!.length
+                            )
+                        )
+                      ],
+                    ),
 
-    final random = Random();
-    late String disease;
+                  )
+              );
+            } else {
+              return Center(
+                child: Text('업로드 기록이 없습니다.'),
+              );
+            }
+          } else {
+            return Center(
+              child: Text('데이터를 불러오는중...'),
+            );
+          }
+        },
+      ),
+    );
+  }
 
-    // 테스트 Result 값 랜덤 생성
-    for(int i = 0; i < 25; i++) {
-      int randomInt = random.nextInt(1000);
-      double randomDouble = randomInt / 1000;
-      DateTime start = DateTime(2022, 1, 1);
-      DateTime end = DateTime.now();
-      Duration difference = end.difference(start);
-
-      Duration randomDuration = Duration(seconds: random.nextInt(difference.inSeconds));
-      DateTime randomDate = start.add(randomDuration);
-
-      bool result;
-      if(randomInt%5 != 0){
-        result = true;
-        disease = diseaseName[randomInt%7+1];
-      } else{
-        result = false;
-        randomDouble = 0;
-        disease = diseaseName[0];
-      }
-
-      results.add(Results(date:randomDate, result:result, percent:randomDouble, disease: disease));
-    }
-    if(results != null) {
-      return SafeArea(
-          child: Scaffold(
-            backgroundColor: Colors.white,
-            body: CustomScrollView(
-              physics: const ClampingScrollPhysics(),
-              slivers: <Widget>[
-                const SliverAppBar(
-                  toolbarHeight: 60,
-                  backgroundColor: Colors.blueAccent,
-                  floating: true,
-                  pinned: false, // 스크롤을 아래로 내릴 때 AppBar를 고정
-                  shape: ContinuousRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(15),
-                          bottomRight: Radius.circular(15)
-                      )
-                  ),
-                  flexibleSpace: FlexibleSpaceBar(
-                    centerTitle: true,
-                    title: Text('결과 확인'),
-                  ),
-                ),
-                SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, index) {
-                          results.sort((a, b) => b.date.compareTo(a.date));
-                          return Column(
-                            children: [
-                              Result(ResultData: results[index]),
-                              Divider(color: Colors.grey.withOpacity(0.3)),
-                            ],
-                          );
-                        },
-                        childCount: results.length
-                    )
-                )
-              ],
-            ),
-
-          )
-      );
-    } else{
-      // results가 null인 경우에 대한 처리
-      return const CircularProgressIndicator();
-    }
+  Future<List<Results>?> fetchData() async {
+    final controller = UrlController();
+    return await controller.loadResult();
   }
 }
 
@@ -98,26 +111,51 @@ class Result extends StatelessWidget {
   Widget build(BuildContext context) {
     late String result;
     late Color resultColor;
-    late double value;
+    String maxValue  = '확인중';
+    double maxScore = 0.00;
 
-    if(ResultData.percent == 0) {
-      value = 0;
+    if (ResultData.Edwardsiella > maxScore) {
+      maxScore = ResultData.Edwardsiella;
+      maxValue = '에드워드병';
+    }
+    if (ResultData.Vibrio > maxScore) {
+      maxScore = ResultData.Vibrio;
+      maxValue = '비브리오병';
+    }
+    if (ResultData.Streptococcus > maxScore) {
+      maxScore = ResultData.Streptococcus;
+      maxValue = '연쇄구균병';
+    }
+    if (ResultData.Tenacibaculumn > maxScore) {
+      maxScore = ResultData.Tenacibaculumn;
+      maxValue = '활주세균병';
+    }
+    if (ResultData.Enteromyxum > maxScore) {
+      maxScore = ResultData.Enteromyxum;
+      maxValue = '여윔증';
+    }
+    if (ResultData.Miamiensis > maxScore) {
+      maxScore = ResultData.Miamiensis;
+      maxValue = '스쿠티카병';
+    }
+    if (ResultData.VHSV > maxScore) {
+      maxScore = ResultData.VHSV;
+      maxValue = 'VHSV';
+    }
+
+    if(ResultData.isDone == false) {
       result = '결과 확인중';
       resultColor = Colors.grey;
-    } else if (ResultData.percent < 0.3) {
-      value = ResultData.percent;
+    } else if (maxScore < 0.3) {
       result = '안전';
       resultColor = Colors.green;
-    } else if (ResultData.percent < 0.7) {
-      value = ResultData.percent;
+    } else if (maxScore < 0.7) {
       result = '보통';
       resultColor = Colors.orange;
-    } else if (ResultData.percent <= 1){
-      value = ResultData.percent;
+    } else if (maxScore <= 1){
       result = '위험';
       resultColor = Colors.red;
     } else{
-      value = 0;
       result = 'error';
       resultColor = Colors.grey;
     }
@@ -130,8 +168,8 @@ class Result extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${ResultData.date.year - 2000}년 ${ResultData.date.month}월 ${ResultData.date.day}일'
-                      ' ${ResultData.date.hour}시 ${ResultData.date.minute}분 업로드 결과',
+                  Text('${ResultData.uploadDate.year - 2000}년 ${ResultData.uploadDate.month}월 ${ResultData.uploadDate.day}일'
+                      ' ${ResultData.uploadDate.hour}시 ${ResultData.uploadDate.minute}분 업로드 결과',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -156,7 +194,7 @@ class Result extends StatelessWidget {
               width: 370,
               backgroundColor: Colors.grey.shade300,
               foregrondColor: resultColor,
-              ratio: value,
+              ratio: maxScore,
               direction: Axis.horizontal,
               curve: Curves.fastLinearToSlowEaseIn,
               duration: const Duration(seconds: 3),
@@ -166,8 +204,8 @@ class Result extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('병명: ${ResultData.disease}'),
-                  Text('${(value * 100).toStringAsFixed(1)} %',
+                  Text('병명: ${maxValue}'),
+                  Text('${(maxScore * 100).toStringAsFixed(1)} %',
                     style: TextStyle(
                         color: resultColor,
                         fontSize: 20,
@@ -179,14 +217,15 @@ class Result extends StatelessWidget {
           ],
         ),
         onTap: () {
-          Get.to(() => Detail());
+          Get.to(() => Detail(data: ResultData));
         }
     );
   }
 }
 
 class Detail extends StatelessWidget {
-  Detail({super.key});
+  final Results data;
+  Detail({required this.data,super.key});
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -225,7 +264,8 @@ class Detail extends StatelessWidget {
                               barTouchData: barTouchData,
                               titlesData: titlesData,
                               borderData: borderData,
-                              barGroups: barGroups,
+                              barGroups: getBarGroups(data.Edwardsiella, data.Vibrio, data.Streptococcus, data.Tenacibaculumn,
+                              data.Enteromyxum, data.Miamiensis, data.VHSV),
                               gridData: FlGridData(
                                 show: true,
                                 drawVerticalLine: false,
@@ -355,78 +395,80 @@ LinearGradient get _barsGradient => const LinearGradient(
   end: Alignment.topCenter,
 );
 
-List<BarChartGroupData> get barGroups => [
-  BarChartGroupData(
-    x: 0,
-    barRods: [
-      BarChartRodData(
-        toY: 100,
-        gradient: _barsGradient,
-      )
-    ],
-    showingTooltipIndicators: [0],
-  ),
-  BarChartGroupData(
-    x: 1,
-    barRods: [
-      BarChartRodData(
-        toY: 80,
-        gradient: _barsGradient,
-      )
-    ],
-    showingTooltipIndicators: [0],
-  ),
-  BarChartGroupData(
-    x: 2,
-    barRods: [
-      BarChartRodData(
-        toY: 70,
-        gradient: _barsGradient,
-      )
-    ],
-    showingTooltipIndicators: [0],
-  ),
-  BarChartGroupData(
-    x: 3,
-    barRods: [
-      BarChartRodData(
-        toY: 55.5,
-        gradient: _barsGradient,
-      )
-    ],
-    showingTooltipIndicators: [0],
-  ),
-  BarChartGroupData(
-    x: 4,
-    barRods: [
-      BarChartRodData(
-        toY: 30,
-        gradient: _barsGradient,
-      )
-    ],
-    showingTooltipIndicators: [0],
-  ),
-  BarChartGroupData(
-    x: 5,
-    barRods: [
-      BarChartRodData(
-        toY: 20,
-        gradient: _barsGradient,
-      )
-    ],
-    showingTooltipIndicators: [0],
-  ),
-  BarChartGroupData(
-    x: 6,
-    barRods: [
-      BarChartRodData(
-        toY: 0,
-        gradient: _barsGradient,
-      )
-    ],
-    showingTooltipIndicators: [0],
-  ),
-];
+List<BarChartGroupData> getBarGroups(double ed, double vi, double st, double te, double en, double mi, double vh) {
+  return [
+    BarChartGroupData(
+      x: 0,
+      barRods: [
+        BarChartRodData(
+          toY: ed*100,
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 1,
+      barRods: [
+        BarChartRodData(
+          toY: vi*100,
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 2,
+      barRods: [
+        BarChartRodData(
+          toY: st*100,
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 3,
+      barRods: [
+        BarChartRodData(
+          toY: te*100,
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 4,
+      barRods: [
+        BarChartRodData(
+          toY: en*100,
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 5,
+      barRods: [
+        BarChartRodData(
+          toY: mi*100,
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 6,
+      barRods: [
+        BarChartRodData(
+          toY: vh*100,
+          gradient: _barsGradient,
+        )
+      ],
+      showingTooltipIndicators: [0],
+    ),
+  ];
+}
 
 
 

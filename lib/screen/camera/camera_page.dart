@@ -2,14 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:untitled/class/class.dart';
 import 'package:untitled/get_controller/camera_controller.dart';
-import 'package:untitled/layout/toast_message.dart';
 import 'package:untitled/screen/camera/camera_guide.dart';
+import 'package:untitled/screen/navigator_page.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({Key? key}) : super(key: key);
@@ -35,7 +34,6 @@ class _CameraPageState extends State<CameraPage> {
             controller: controller.pageController,
             itemCount: controller.imageData.length,
             itemBuilder: (context, index) {
-              final images = controller.imageData[index];
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -50,9 +48,9 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: images.imgPath == null
+                          child: controller.imageData[index].imgPath == null
                               ? const Center(child: Text('이미지를 촬영해 주세요!'))
-                              : Image.file(File(images.imgPath!.path),
+                              : Image.file(File(controller.imageData[index].imgPath!.path),
                           ),
                         ),
                       ),
@@ -149,7 +147,9 @@ class _CameraPageState extends State<CameraPage> {
                         child: Center(
                           child: images.imgPath == null
                               ? const Text('사진이 없어요')
-                              : Image.file(File(images.imgPath!.path)),
+                              : InteractiveViewer(
+                              child: Image.file(File(images.imgPath!.path))
+                          ),
                         ),
                       ),
                     ),
@@ -355,8 +355,8 @@ class _CameraPageState extends State<CameraPage> {
                                                           actions: [
                                                             TextButton(
                                                               onPressed: () {
-                                                                Get.back();
                                                                 controller.imageUpload();
+                                                                Get.offAll(() => NavigatorPage());
                                                               },
                                                               child: const Text(
                                                                   '확인'),

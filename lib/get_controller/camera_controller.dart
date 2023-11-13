@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:untitled/class/class.dart';
+import 'package:untitled/get_controller/url_controller.dart';
 import 'package:untitled/layout/toast_message.dart';
 import 'package:http/http.dart' as http;
 
@@ -84,11 +85,12 @@ class CameraPageController extends GetxController {
 
   //촬영 이미지를 서버로 전송하는 코드
   Future imageUpload () async {
+    var urlController = UrlController();
     showSpinner.value = true;
 
     final box = GetStorage();
-
-    final url = Uri.parse('http://10.0.2.2:8000/register/uploadImage/');
+    final root = urlController.url;
+    final url = root.resolve('/register/uploadImage/');
     final request = http.MultipartRequest('POST', url);
     print("token = ${box.read('token')}");
     request.headers['Authorization'] = 'Token ${box.read('token')}';
@@ -118,7 +120,11 @@ class CameraPageController extends GetxController {
         // 업로드 성공
         print('Upload successful');
         // showSpinner.value = false;
+        for (int i = 0; i < imageData.length; i++) {
+          imageData[i].imgPath = null;
+        }
         toastmsg('업로드 완료');
+        Get.back();
       } else {
         // 업로드 실패
         print('Upload failed with status ${response.statusCode}');

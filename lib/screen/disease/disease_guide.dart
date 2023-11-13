@@ -24,8 +24,6 @@ class DiseaseGuide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    List<Color> colors = [Colors.blue, Colors.red, Colors.yellow,
-      Colors.green, Colors.purple, Colors.pink, Colors.orange];
 
     return Scaffold(
       body: SafeArea(
@@ -37,7 +35,7 @@ class DiseaseGuide extends StatelessWidget {
               backgroundColor: Colors.blue,
               floating: true,
               pinned: false, // 스크롤을 아래로 내릴 때 AppBar를 고정
-              shape: ContinuousRectangleBorder(
+              shape: const ContinuousRectangleBorder(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(15),
                       bottomRight: Radius.circular(15)
@@ -52,28 +50,35 @@ class DiseaseGuide extends StatelessWidget {
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
+                      padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Image.asset(imgPath[0], width: size.width / 2.4),
+                          Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Image.asset(imgPath[0], width: size.width / 2.4)),
                           Expanded(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(krName,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 23
+                                        fontSize: 26
                                     ),
                                   textAlign: TextAlign.center,
                                 ),
-                                Text(enName)
+                                Text(enName,
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                    ))
                               ],),
                           )
                         ],
                       ),
                     ),
-                    Text('발병 사진',
+                    const Text('발병 사진',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20
@@ -82,40 +87,76 @@ class DiseaseGuide extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            for (Color color in colors)
+                            for (String img in imgPath)
                               Padding(
-                                padding: EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5),
                                 child: Container(
                                   width: 130,
                                   height: 130,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(15),
-                                      color: color
+                                      color: Colors.grey
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(15),
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(15),
+                                      onTap: (){
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Scaffold(
+                                              appBar: AppBar(
+                                                backgroundColor: Colors.transparent,
+                                                centerTitle: true,
+                                                title: const Text('사진',
+                                                  style: TextStyle(color: Colors.white,
+                                                  ),
+                                                ),
+                                                iconTheme: const IconThemeData(color: Colors.white),
+                                              ),
+                                              backgroundColor: Colors.black,
+                                              body: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Center(
+                                                  child: SizedBox(
+                                                    height: size.height,
+                                                    child: InteractiveViewer(
+                                                        child: Image.asset(img)
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Image.asset(img),
+                                    ),
                                   ),
                                 ),
                               ),
                           ],
                         )
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('감염원',
+                            const Text('감염원',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20
                               ),
                             ),
                             Text(infectionSrc,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15
                               ),),
                           ],
@@ -125,18 +166,18 @@ class DiseaseGuide extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('증상',
+                            const Text('증상',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20
                               ),
                             ),
                             Text(symptom,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15
                               ),),
                           ],
@@ -146,18 +187,18 @@ class DiseaseGuide extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('시기',
+                            const Text('시기',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20
                               ),
                             ),
                             Text(period,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15
                               ),),
                           ],
@@ -167,17 +208,20 @@ class DiseaseGuide extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(krName,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20
                               ),
                             ),
-                            Text(description)
+                            Text(description,
+                                style: const TextStyle(
+                                    fontSize: 15
+                                ))
                           ],
                         ),
                       ),

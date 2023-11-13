@@ -7,17 +7,37 @@ class Images{
   Images(this.name, this.imgPath);
 }
 
-class Results{
-  late final DateTime date;
-  late final bool result;
-  late final double percent;
-  late final String disease;
+class Results {
+  late final String location;
+  late final DateTime uploadDate;
+  late final int numberImages;
+  late final bool isDone;
+  late final double Edwardsiella;
+  late final double Vibrio;
+  late final double Streptococcus;
+  late final double Tenacibaculumn;
+  late final double Enteromyxum;
+  late final double Miamiensis;
+  late final double VHSV;
 
-  Results({required DateTime date, required bool result, double percent = 0, required String disease})
-  : date = date,
-  result = result,
-  percent = percent,
-  disease = disease;
+  Results({
+    required this.location,
+    required this.uploadDate,
+    required this.numberImages,
+    required this.isDone,
+    required this.Edwardsiella,
+    required this.Vibrio,
+    required this.Streptococcus,
+    required this.Tenacibaculumn,
+    required this.Enteromyxum,
+    required this.Miamiensis,
+    required this.VHSV,
+  });
+
+  List<double> get diseaseScore {
+    return [Edwardsiella, Vibrio, Streptococcus, Tenacibaculumn, Enteromyxum, Miamiensis, VHSV];
+  }
+
 }
 
 class Guide{

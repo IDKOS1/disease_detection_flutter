@@ -9,12 +9,10 @@ import 'package:untitled/screen/navigator_page.dart';
 
 void main() async {
   await GetStorage.init();
-  final box = GetStorage();
-  String? token = box.read('token');
-  print('토큰(메인):$token');
+
   final controller = Get.put(UrlController());
 
-  Future<bool> checkToken = controller.checkToken(token);
+  Future<bool> checkToken = controller.checkToken();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ),
