@@ -131,13 +131,12 @@ class _DiseasePageState extends State<DiseasePage> {
           title: Text(krName,
             style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20
+                fontSize: 19
             ),
           ),
           subtitle: Text(enName,
-            textAlign: TextAlign.center,
             style: const TextStyle(
-                fontSize: 18,
+                fontSize: 17,
             ),),
         ),
       ),

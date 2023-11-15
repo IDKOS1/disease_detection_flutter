@@ -129,8 +129,8 @@ class _CameraPageState extends State<CameraPage> {
     return Column(
       children: [
         Container(
-          height: size.width/3,
-          width: size.width/3,
+          height: size.width/3.2,
+          width: size.width/3.2,
           child: InkWell(
             onTap: () {
               showDialog(
