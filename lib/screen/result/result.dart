@@ -1,9 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:untitled/class/class.dart';
-import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:untitled/get_controller/url_controller.dart';
 
@@ -160,6 +160,8 @@ class Result extends StatelessWidget {
       resultColor = Colors.grey;
     }
 
+    final size = MediaQuery.of(context).size;
+
     return InkWell(
         child: Column(
           children: [
@@ -172,12 +174,12 @@ class Result extends StatelessWidget {
                       ' ${ResultData.uploadDate.hour}시 ${ResultData.uploadDate.minute}분 업로드 결과',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                      fontSize: 14,
                     ),),
                   Text(result,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 17,
                         color: resultColor,
                         //decoration: TextDecoration.underline,
                         decorationColor: resultColor,
@@ -191,7 +193,7 @@ class Result extends StatelessWidget {
             const SizedBox(height: 3,),
             SimpleAnimationProgressBar(
               height: 4,
-              width: 370,
+              width: size.width - 30,
               backgroundColor: Colors.grey.shade300,
               foregrondColor: resultColor,
               ratio: maxScore,
@@ -208,7 +210,7 @@ class Result extends StatelessWidget {
                   Text('${(maxScore * 100).toStringAsFixed(1)} %',
                     style: TextStyle(
                         color: resultColor,
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold
                     ),),
                 ],
@@ -238,7 +240,8 @@ class Detail extends StatelessWidget {
               toolbarHeight: 60,
               backgroundColor: Colors.green,
               floating: true,
-              pinned: false, // 스크롤을 아래로 내릴 때 AppBar를 고정
+              pinned: false,
+              // 스크롤을 아래로 내릴 때 AppBar를 고정
               shape: ContinuousRectangleBorder(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(15),
@@ -256,7 +259,7 @@ class Detail extends StatelessWidget {
                   children: [
                     Container(
                         width: size.width,
-                        height: size.height/2,
+                        height: size.height / 2,
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(0, 40, 0, 10),
                           child: BarChart(
@@ -264,27 +267,33 @@ class Detail extends StatelessWidget {
                               barTouchData: barTouchData,
                               titlesData: titlesData,
                               borderData: borderData,
-                              barGroups: getBarGroups(data.Edwardsiella, data.Vibrio, data.Streptococcus, data.Tenacibaculumn,
-                              data.Enteromyxum, data.Miamiensis, data.VHSV),
+                              barGroups: getBarGroups(
+                                  data.Edwardsiella,
+                                  data.Vibrio,
+                                  data.Streptococcus,
+                                  data.Tenacibaculumn,
+                                  data.Enteromyxum,
+                                  data.Miamiensis,
+                                  data.VHSV),
                               gridData: FlGridData(
                                 show: true,
                                 drawVerticalLine: false,
-                                getDrawingHorizontalLine: (value) => FlLine(
-                                    color: Colors.grey.withOpacity(0.7),
-                                    strokeWidth: 0.6
-                                ),
+                                getDrawingHorizontalLine: (value) =>
+                                    FlLine(
+                                        color: Colors.grey.withOpacity(0.7),
+                                        strokeWidth: 0.6
+                                    ),
                               ),
                               alignment: BarChartAlignment.spaceAround,
                               maxY: 100,
                             ),
 
-                            swapAnimationDuration: const Duration(milliseconds: 150), // Optional
+                            swapAnimationDuration: const Duration(
+                                milliseconds: 150), // Optional
                             swapAnimationCurve: Curves.linear,
                           ),
                         )
                     ),
-                    const Placeholder(),
-                    const Placeholder(),
                   ],
                 ))
           ],

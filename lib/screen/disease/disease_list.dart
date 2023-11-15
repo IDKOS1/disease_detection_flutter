@@ -135,8 +135,9 @@ class _DiseasePageState extends State<DiseasePage> {
             ),
           ),
           subtitle: Text(enName,
+            textAlign: TextAlign.center,
             style: const TextStyle(
-                fontSize: 18
+                fontSize: 18,
             ),),
         ),
       ),

@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/class/class.dart';
-import 'package:untitled/layout/toast_message.dart';
 import 'package:untitled/screen/navigator_page.dart';
 
 
@@ -74,7 +73,6 @@ class UrlController extends GetxController {
 
       print("응답코드: ${response.statusCode}");
       if (response.statusCode == 200 && responseData["token"] != null) {
-        print("토큰 ${responseData["token"]}");
         String token = responseData["token"];
         int id = responseData["id"];
         String name = responseData["name"];
@@ -173,9 +171,12 @@ class UrlController extends GetxController {
           );
         }).toList();
         return resultsList;
-      } else {
-        Fluttertoast.showToast(msg: '[${response.statusCode}] 에러 발생.');
+      } else if(response.statusCode == 401) {
+        Fluttertoast.showToast(msg: '로그인 정보가 없습니다.');
         return [];
+      }else {
+      Fluttertoast.showToast(msg: '[${response.statusCode}] 에러 발생.');
+      return [];
       }
     } catch (e) {
       print("에러발생: $e");

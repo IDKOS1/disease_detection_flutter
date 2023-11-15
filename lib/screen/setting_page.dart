@@ -65,18 +65,21 @@ class _SettingPageState extends State<SettingPage> {
                         Get.offAll(() => LoginPage());
                       },
                       child: Text('Log out')),
-                  ElevatedButton(
-                      onPressed: () async {
-                        bool isTrue = await controller.checkToken();
-                        print('bool = ${isTrue}');
-                        toastmsg('${box.read('token')}');
-                      },
-                      child: Text('Check Token')),
-                  ElevatedButton(
-                      onPressed: () async {
-                        await controller.loadResult();
-                      },
-                      child: Text('length result'))
+
+                  // 토큰 확인 버튼
+                  // ElevatedButton(
+                  //     onPressed: () async {
+                  //       bool isTrue = await controller.checkToken();
+                  //       print('bool = ${isTrue}');
+                  //       toastmsg('${box.read('token')}');
+                  //     },
+                  //     child: Text('Check Token')),
+                  // 업로드 결과 확인 버튼
+                  // ElevatedButton(
+                  //     onPressed: () async {
+                  //       await controller.loadResult();
+                  //     },
+                  //     child: Text('length result'))
                 ],
               ),
             )

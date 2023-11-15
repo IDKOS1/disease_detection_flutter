@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -125,7 +124,9 @@ class CameraPageController extends GetxController {
         }
         toastmsg('업로드 완료');
         Get.back();
-      } else {
+      } else if (response.statusCode == 401) {
+        toastmsg('로그인 정보가 없습니다.');
+      }else {
         // 업로드 실패
         print('Upload failed with status ${response.statusCode}');
         // showSpinner.value = false;
@@ -173,6 +174,6 @@ class CameraPageController extends GetxController {
         //toastmsg('선택 이미지 없음');
       }
     }
-    Fluttertoast.showToast(msg: "저장 되었습니다.");
+    toastmsg("저장 되었습니다.");
   }
 }
