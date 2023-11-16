@@ -89,6 +89,7 @@ class CameraPageController extends GetxController {
 
     final box = GetStorage();
     final root = urlController.url;
+
     final url = root.resolve('/register/uploadImage/');
     final request = http.MultipartRequest('POST', url);
     print("token = ${box.read('token')}");
@@ -109,7 +110,6 @@ class CameraPageController extends GetxController {
           await http.MultipartFile.fromPath('image_$i', file.path),
         );
       }
-      //imageData[i].imgPath = null;
     }
 
     // 서버에 요청 보내고 응답 받기

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/class/class.dart';
+import 'package:untitled/layout/toast_message.dart';
 import 'package:untitled/screen/navigator_page.dart';
 
 
@@ -69,6 +70,7 @@ class UrlController extends GetxController {
             'password': password,
           })
       ).timeout(const Duration(seconds: 20));
+
       final responseData = json.decode(response.body);
 
       print("응답코드: ${response.statusCode}");
@@ -82,7 +84,7 @@ class UrlController extends GetxController {
         box.write('name', name);
         box.write('farm', farm);
         box.write('email', email);
-        Fluttertoast.showToast(msg: responseData["token"]);
+        toastmsg('로그인 되었습니다.');
         print("token: $token");
         print("id: $id");
         showSpinner.value = false;
@@ -112,6 +114,7 @@ class UrlController extends GetxController {
             'Authorization': 'Token $token',
           },
         ).timeout(const Duration(seconds: 20));
+
         final responseData = json.decode(response.body);
 
         print("응답코드: ${responseData["message"]}");
@@ -119,8 +122,7 @@ class UrlController extends GetxController {
 
         if (response.statusCode == 200) {
           box.write('token', token);
-
-          Fluttertoast.showToast(msg: respons);
+          toastmsg('로그인 되었습니다.');
           return true;
         } else {
           Fluttertoast.showToast(msg: respons);
@@ -149,11 +151,9 @@ class UrlController extends GetxController {
       ).timeout(const Duration(seconds: 20));
 
       print("응답코드: ${response.statusCode}");
+
       if (response.statusCode == 200) {
         print(response.body);
-        if(response.body == null) {
-          return [];
-        }
         final List<dynamic> jsonList = await json.decode(response.body);
         List<Results> resultsList = await jsonList.map((jsonItem) {
           return Results(
