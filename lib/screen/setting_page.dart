@@ -47,7 +47,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
-                title: Text('설정'),
+                title: Text('내 정보'),
               ),
             ),
             SliverToBoxAdapter(
@@ -58,13 +58,21 @@ class _SettingPageState extends State<SettingPage> {
                   infoWidget('이름', name),
                   infoWidget('이메일', email),
                   infoWidget('양식장', farm),
+                  SizedBox(height: 15,),
                   ElevatedButton(
                       onPressed: () async {
                         box.remove('token');
                         print('token: ${box.read('toekn')}');
                         Get.offAll(() => LoginPage());
                       },
-                      child: Text('Log out')),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      child: Text('로그아웃')),
 
                   // 토큰 확인 버튼
                   // ElevatedButton(
@@ -90,25 +98,28 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   Widget infoWidget(String title, String content) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 23
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(color: Colors.grey.withOpacity(0.2))
+          )
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20
             ),
-            Text(content,
-              style: const TextStyle(
-                  fontSize: 16
-              ),),
-          ],
-        ),
+          ),
+          Text(content,
+            style: const TextStyle(
+                fontSize: 16
+            ),),
+        ],
       ),
     );
   }

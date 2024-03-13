@@ -28,15 +28,18 @@ class _ResultPageState extends State<ResultPage> {
         future: fetchData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
+
           } else if (snapshot.hasError) {
-            return Center(
+            return const Center(
               child: Text('데이터를 가져오는 동안 오류가 발생했습니다.'),
             );
+
           } else if (snapshot.hasData) {
             final data = snapshot.data;
+
             if (data != null && data.isNotEmpty) {
               data.sort((a, b) => b.uploadDate.compareTo(a.uploadDate));
               return SafeArea(
@@ -84,12 +87,12 @@ class _ResultPageState extends State<ResultPage> {
                   )
               );
             } else {
-              return Center(
+              return const Center(
                 child: Text('업로드 기록이 없습니다.'),
               );
             }
           } else {
-            return Center(
+            return const Center(
               child: Text('데이터를 불러오는중...'),
             );
           }

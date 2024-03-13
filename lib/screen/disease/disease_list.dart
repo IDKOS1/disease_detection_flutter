@@ -119,7 +119,7 @@ class _DiseasePageState extends State<DiseasePage> {
   Widget diseaseList(String krName, String enName, List<String> imgPath,
       String infectionSrc, String symptom, String period, String description) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: Card(
         child: ListTile(
           onTap: () {
