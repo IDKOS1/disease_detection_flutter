@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:untitled/Util/util.dart';
 import 'package:untitled/class/class.dart';
 import 'package:untitled/get_controller/camera_controller.dart';
 import 'package:untitled/screen/camera/camera_guide.dart';
@@ -196,6 +197,7 @@ class _CameraPageState extends State<CameraPage> {
     print('촬영 페이지 진입 ${controller.currentIndex}');
     return ScaffoldMessenger(
       child: Scaffold(
+        appBar: utilAppBar(context, "수산 질병 진단/ 예측"),
           backgroundColor: const Color(0xfff4f3f9),
           body: SafeArea(
             child: Column(
@@ -207,11 +209,6 @@ class _CameraPageState extends State<CameraPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text('수산질병 판독 촬영',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),),
                       const SizedBox(height: 10,),
                          Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -295,106 +292,7 @@ class _CameraPageState extends State<CameraPage> {
                           ElevatedButton(
                             child: const Text("이미지 업로드"),
                             onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return StatefulBuilder(
-                                      builder: (context, setState) {
-                                        return ModalProgressHUD(
-                                          inAsyncCall: controller.showSpinner.value,
-                                          child: AlertDialog(
-                                            title: const Text('정말 업로드 하시겠습니까?',
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                            content: SingleChildScrollView(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  for(int i=0; i <= 14; i+=2) ... [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        _upGrid(controller.imageData[i]),
-                                                        _upGrid(controller.imageData[i+1]),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    children: [
-                                                      _upGrid(controller.imageData[16]),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () async {
-                                                  print('업로드 클릭');
-                                                  // 누락된 이미지가 있는지 확인하는 코드
-                                                  if (controller.imageData.any((image) => image.imgPath == null)) {
-                                                    print("미촬영된 이미지");
-                                                    if (!controller.imageData.any((image) => image.imgPath != null)) {
-                                                      // 모든 이미지의 imgPath 값이 null인 경우
-                                                      print("전체 이미지 없음");
-                                                      Fluttertoast.showToast(msg: '최소 1장의 이미지를 촬영 해주세요.');
-                                                      return;
-                                                    }
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return AlertDialog(
-                                                          title: const Text(
-                                                              '미촬영된 이미지가 있습니다.',
-                                                          style: TextStyle(
-                                                            fontSize: 20,
-                                                          ),),
-                                                          content: const Text(
-                                                              '정말 업로드 하시겠습니까?'),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                controller.imageUpload();
-                                                                Get.offAll(() => NavigatorPage());
-                                                              },
-                                                              child: const Text(
-                                                                  '확인'),
-                                                            ),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Get.back();
-                                                              },
-                                                              child: const Text(
-                                                                  '취소'),
-                                                            )
-
-                                                          ],
-                                                        );
-                                                      }
-                                                    );
-                                                  } else {
-                                                    print("누락된 촬영 없음");
-                                                    controller.imageUpload();
-                                                    // 다이얼로그 닫기
-                                                    Get.back();
-                                                  }
-                                                },
-                                                child: const Text('업로드'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  // 다이얼로그 닫기
-                                                  Get.back();
-                                                },
-                                                child: const Text('닫기'),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }
-                                    );
-                                  });
+                              imageUpload();
                             },
                           ),
                         ],
@@ -407,4 +305,108 @@ class _CameraPageState extends State<CameraPage> {
           )),
     );
   }
+  void imageUpload() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (context, setState) {
+                return ModalProgressHUD(
+                  inAsyncCall: controller.showSpinner.value,
+                  child: AlertDialog(
+                    title: const Text('정말 업로드 하시겠습니까?',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          for(int i=0; i <= 14; i+=2) ... [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _upGrid(controller.imageData[i]),
+                                _upGrid(controller.imageData[i+1]),
+                              ],
+                            ),
+                          ],
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              _upGrid(controller.imageData[16]),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () async {
+                          print('업로드 클릭');
+                          // 누락된 이미지가 있는지 확인하는 코드
+                          if (controller.imageData.any((image) => image.imgPath == null)) {
+                            print("미촬영된 이미지");
+                            if (!controller.imageData.any((image) => image.imgPath != null)) {
+                              // 모든 이미지의 imgPath 값이 null인 경우
+                              print("전체 이미지 없음");
+                              Fluttertoast.showToast(msg: '최소 1장의 이미지를 촬영 해주세요.');
+                              return;
+                            }
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                      '미촬영된 이미지가 있습니다.',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),),
+                                    content: const Text(
+                                        '정말 업로드 하시겠습니까?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          controller.imageUpload();
+                                          Get.offAll(() => const NavigatorPage());
+                                        },
+                                        child: const Text(
+                                            '확인'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Get.back();
+                                        },
+                                        child: const Text(
+                                            '취소'),
+                                      )
+
+                                    ],
+                                  );
+                                }
+                            );
+                          } else {
+                            print("누락된 촬영 없음");
+                            controller.imageUpload();
+                            // 다이얼로그 닫기
+                            Get.back();
+                          }
+                        },
+                        child: const Text('업로드'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // 다이얼로그 닫기
+                          Get.back();
+                        },
+                        child: const Text('닫기'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+          );
+        });
+  }
+
 }
+

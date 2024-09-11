@@ -81,15 +81,15 @@ class _DiseasePageState extends State<DiseasePage> {
                 backgroundColor: Colors.blue,
                 floating: true,
                 pinned: false,
+              centerTitle: true,
+              title: Text('질병 정보',
+                style: TextStyle(color: Colors.white),
+              ),
                 shape: ContinuousRectangleBorder(
                     borderRadius: BorderRadius.only(
                         bottomRight: Radius.circular(15),
                         bottomLeft: Radius.circular(15)
                     )
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Text('질병 정보'),
                 ),
               ),
               SliverList(

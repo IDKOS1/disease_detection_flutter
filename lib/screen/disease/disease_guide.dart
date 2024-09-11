@@ -35,15 +35,15 @@ class DiseaseGuide extends StatelessWidget {
               backgroundColor: Colors.blue,
               floating: true,
               pinned: false, // 스크롤을 아래로 내릴 때 AppBar를 고정
+              centerTitle: true,
+              title: Text(krName,
+                style: TextStyle(color: Colors.white),
+              ),
               shape: const ContinuousRectangleBorder(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(15),
                       bottomRight: Radius.circular(15)
                   )
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(krName),
               ),
             ),
             SliverToBoxAdapter(

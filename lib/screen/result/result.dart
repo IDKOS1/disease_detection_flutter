@@ -53,16 +53,16 @@ class _ResultPageState extends State<ResultPage> {
                           backgroundColor: Colors.blueAccent,
                           floating: true,
                           pinned: false,
+                          title: Text('결과 확인',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          centerTitle: true,
                           // 스크롤을 아래로 내릴 때 AppBar를 고정
                           shape: ContinuousRectangleBorder(
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(15),
                                   bottomRight: Radius.circular(15)
                               )
-                          ),
-                          flexibleSpace: FlexibleSpaceBar(
-                            centerTitle: true,
-                            title: Text('결과 확인'),
                           ),
                         ),
                         SliverList(

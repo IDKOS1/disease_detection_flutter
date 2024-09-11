@@ -24,6 +24,7 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     final box = GetStorage();
+
     String name = box.read('name') ?? '이름 정보 없음';
     String email = box.read('email') ?? '이메일 정보 없음';
     String farm = box.read('farm') ?? '농장 정보 없음';
@@ -32,22 +33,22 @@ class _SettingPageState extends State<SettingPage> {
       body: SafeArea(
         child: CustomScrollView(
           shrinkWrap: true,
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             const SliverAppBar(
               toolbarHeight: 60,
               backgroundColor: Colors.blue,
               floating: true,
               pinned: false,
+              centerTitle: true,
+              title: Text('내 정보',
+                style: TextStyle(color: Colors.white),
+              ),
               shape: ContinuousRectangleBorder(
                   borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(15),
                       bottomLeft: Radius.circular(15)
                   )
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text('내 정보'),
               ),
             ),
             SliverToBoxAdapter(
@@ -58,7 +59,7 @@ class _SettingPageState extends State<SettingPage> {
                   infoWidget('이름', name),
                   infoWidget('이메일', email),
                   infoWidget('양식장', farm),
-                  SizedBox(height: 15,),
+                  const SizedBox(height: 15,),
                   ElevatedButton(
                       onPressed: () async {
                         box.remove('token');
@@ -72,7 +73,7 @@ class _SettingPageState extends State<SettingPage> {
                           ),
                         ),
                       ),
-                      child: Text('로그아웃')),
+                      child: const Text('로그아웃')),
 
                   // 토큰 확인 버튼
                   // ElevatedButton(
@@ -110,15 +111,25 @@ class _SettingPageState extends State<SettingPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title,
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20
             ),
           ),
-          Text(content,
-            style: const TextStyle(
-                fontSize: 16
-            ),),
+          InkWell(
+            onTap: () {
+              Get.to(() => ChangeInfo(info: title));
+            },
+            child: Row(
+              children: [
+                Text(content,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),),
+                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey,)
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -144,3 +155,45 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 }
+
+class ChangeInfo extends StatelessWidget {
+  final String info;
+
+  const ChangeInfo({Key? key,
+    required this.info
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: SafeArea(
+          child: CustomScrollView(
+            shrinkWrap: true,
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverAppBar(
+                toolbarHeight: 60,
+                backgroundColor: Colors.blue,
+                floating: true,
+                pinned: false,
+                centerTitle: true,
+                title: Text('$info 수정',
+                  style: TextStyle(color: Colors.white),
+                ),
+                shape: const ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(15),
+                        bottomLeft: Radius.circular(15)
+                    )
+                ),
+              ),
+            ],
+          ),
+        )
+    );
+  }
+}
+
+
+
+
